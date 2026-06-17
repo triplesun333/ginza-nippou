@@ -233,15 +233,16 @@
     <div class="card">
       <label>日付</label>
       <input type="date" id="w-date">
-      <div class="hint">本社にいる方が、わかる範囲で全員分まとめて入力してください</div>
+      <div class="hint">まずは自分の分だけでOKです。他の人の分がわかれば、ついでに入力してもらえると助かります（空欄のままで送って大丈夫です）。</div>
     </div>
 
     <div id="w-rows"></div>
 
     <div class="card">
-      <button class="main-btn" id="w-submit">まとめて送信する</button>
+      <button class="main-btn" id="w-submit">入力した分を送信する</button>
       <div class="msg" id="w-msg"></div>
     </div>
+  </div>
   </div>
 
   <!-- 確認・過去 -->
@@ -253,7 +254,9 @@
     </div>
     <div class="card">
       <label>月ごとの勤務区分一覧</label>
-      <input type="month" id="c-month">
+      <div class="hint">1ヶ月分をまとめて見て、未回答の人がいないか確認できます</div>
+      <input type="month" id="c-month" style="margin-top:10px;">
+      <div class="hint" style="margin-top:8px;">本社＝本社勤務／公休＝公休／新宿＝新宿店勤務／<span class="mk-未">未</span>＝未回答</div>
       <div id="c-grid"></div>
     </div>
   </div>
@@ -473,7 +476,7 @@
     }).filter(Boolean);
 
     if (targets.length === 0) {
-      msg.textContent = '勤務区分が1件も選ばれていません。';
+      msg.textContent = '勤務区分のボタンを1つ以上押してから送信してください。';
       msg.className = 'msg show info';
       return;
     }
@@ -486,7 +489,7 @@
       jsonp({ action: 'submitReport', date: date, name: t.name, workStatus: t.workStatus, content: t.content, note: t.note })
     )).then(function (results) {
       btn.disabled = false;
-      btn.textContent = 'まとめて送信する';
+      btn.textContent = '入力した分を送信する';
       const failed = results.filter(r => !r.success);
       if (failed.length === 0) {
         msg.textContent = `${targets.length}名分を送信しました。お疲れ様でした！`;
@@ -497,7 +500,7 @@
       }
     }).catch(function () {
       btn.disabled = false;
-      btn.textContent = 'まとめて送信する';
+      btn.textContent = '入力した分を送信する';
       msg.textContent = '通信エラーが発生しました';
       msg.className = 'msg show info';
     });
