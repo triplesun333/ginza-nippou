@@ -136,12 +136,43 @@
   .status-btn.sel-公休.selected { background: #b3a7a3; color: white; border-color: #b3a7a3; }
   .status-btn.sel-新宿店勤務.selected { background: var(--purple); color: white; border-color: var(--purple); }
 
-  .row-card { background: var(--card); border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
-  .row-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .row-name { font-size: 15px; font-weight: 700; }
   .row-detail { display: none; margin-top: 10px; }
   .row-detail label { font-size: 12px; margin-top: 10px; }
   .row-detail textarea { min-height: 70px; font-size: 14px; }
+
+  .expander-head {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--pink-dark);
+    cursor: pointer;
+    user-select: none;
+  }
+  .other-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .other-row:last-child { border-bottom: none; }
+  .other-name { font-size: 13px; font-weight: 700; flex-shrink: 0; width: 84px; }
+  .other-btns { display: flex; gap: 6px; flex: 1; }
+  .other-btn {
+    flex: 1;
+    text-align: center;
+    padding: 8px 2px;
+    font-size: 11px;
+    font-weight: 700;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--muted);
+    background: white;
+  }
+  .other-btn.sel-本社勤務.selected { background: var(--blue); color: white; border-color: var(--blue); }
+  .other-btn.sel-公休.selected { background: #b3a7a3; color: white; border-color: #b3a7a3; }
+  .other-btn.sel-新宿店勤務.selected { background: var(--purple); color: white; border-color: var(--purple); }
 
   button.main-btn {
     width: 100%;
@@ -233,16 +264,32 @@
     <div class="card">
       <label>日付</label>
       <input type="date" id="w-date">
-      <div class="hint">まずは自分の分だけでOKです。他の人の分がわかれば、ついでに入力してもらえると助かります（空欄のままで送って大丈夫です）。</div>
-    </div>
 
-    <div id="w-rows"></div>
+      <label>あなたの名前</label>
+      <select id="w-myname"></select>
+    </div>
 
     <div class="card">
-      <button class="main-btn" id="w-submit">入力した分を送信する</button>
+      <label>勤務区分</label>
+      <div class="status-btns" id="w-mystatus-btns"></div>
+
+      <label>業務内容</label>
+      <textarea id="w-content" placeholder="例：
+・〇〇対応
+・〇〇ミーティング
+・サンプル作成"></textarea>
+
+      <label>気づいたこと（任意）</label>
+      <textarea id="w-note" placeholder="例：〇〇の備品が残り少ない" style="min-height:70px;"></textarea>
+
+      <button class="main-btn" id="w-submit">送信する</button>
       <div class="msg" id="w-msg"></div>
     </div>
-  </div>
+
+    <div class="card">
+      <div class="expander-head" id="w-expander-head">ほかのメンバーの勤務区分も入力する（任意） ▾</div>
+      <div id="w-others" style="display:none; margin-top:12px;"></div>
+    </div>
   </div>
 
   <!-- 確認・過去 -->
@@ -373,6 +420,8 @@
 
   // ---- アプリ初期化 ----
   let appInitialized = false;
+  const MYNAME_KEY = 'ginza_nippou_myname';
+
   function initApp() {
     if (appInitialized) return;
     appInitialized = true;
@@ -380,8 +429,20 @@
     jsonp({ action: 'getStaffNames' }).then(function (res) {
       STAFF = res.staff;
       WORK_STATUS_LIST = res.workStatusList;
-      buildWriteRows();
-      loadWriteRowsData(document.getElementById('w-date').value);
+
+      const sel = document.getElementById('w-myname');
+      STAFF.forEach(n => {
+        const o = document.createElement('option');
+        o.value = n; o.textContent = n;
+        sel.appendChild(o);
+      });
+      const saved = localStorage.getItem(MYNAME_KEY);
+      if (saved && STAFF.includes(saved)) sel.value = saved;
+
+      buildMyStatusButtons();
+      buildOthersRows();
+      loadWriteData(document.getElementById('w-date').value);
+
       refreshCheck();
       refreshGrid();
     });
@@ -401,9 +462,20 @@
     });
 
     document.getElementById('w-date').addEventListener('change', function () {
-      loadWriteRowsData(this.value);
+      loadWriteData(this.value);
     });
-    document.getElementById('w-submit').addEventListener('click', submitWriteAll);
+    document.getElementById('w-myname').addEventListener('change', function () {
+      localStorage.setItem(MYNAME_KEY, this.value);
+      buildOthersRows();
+      loadWriteData(document.getElementById('w-date').value);
+    });
+    document.getElementById('w-expander-head').addEventListener('click', function () {
+      const box = document.getElementById('w-others');
+      const open = box.style.display === 'block';
+      box.style.display = open ? 'none' : 'block';
+      this.textContent = 'ほかのメンバーの勤務区分も入力する（任意） ' + (open ? '▾' : '▴');
+    });
+    document.getElementById('w-submit').addEventListener('click', submitWrite);
     document.getElementById('c-date').addEventListener('change', refreshCheck);
     document.getElementById('c-month').addEventListener('change', refreshGrid);
     document.getElementById('e-build').addEventListener('click', buildExport);
@@ -411,88 +483,113 @@
     document.getElementById('e-download-image').addEventListener('click', downloadImage);
   }
 
-  // ---- 書くタブ：5名分の行を作る ----
-  function buildWriteRows() {
-    const box = document.getElementById('w-rows');
+  // ---- 自分用の勤務区分ボタン ----
+  function buildMyStatusButtons() {
+    const box = document.getElementById('w-mystatus-btns');
     box.innerHTML = '';
-    STAFF.forEach(name => {
+    WORK_STATUS_LIST.forEach(s => {
+      const b = document.createElement('div');
+      b.className = 'status-btn sel-' + s;
+      b.textContent = s;
+      b.dataset.value = s;
+      b.addEventListener('click', function () {
+        box.querySelectorAll('.status-btn').forEach(x => x.classList.remove('selected'));
+        b.classList.add('selected');
+      });
+      box.appendChild(b);
+    });
+  }
+
+  // ---- ほかのメンバーのコンパクト行（自分以外）を作る ----
+  function buildOthersRows() {
+    const myname = document.getElementById('w-myname').value;
+    const box = document.getElementById('w-others');
+    box.innerHTML = '';
+    STAFF.filter(n => n !== myname).forEach(name => {
       const row = document.createElement('div');
-      row.className = 'row-card';
+      row.className = 'other-row';
       row.dataset.name = name;
       row.innerHTML = `
-        <div class="row-head"><div class="row-name">${name}</div></div>
-        <div class="status-btns">
-          ${WORK_STATUS_LIST.map(s => `<div class="status-btn sel-${s}" data-value="${s}">${s}</div>`).join('')}
-        </div>
-        <div class="row-detail">
-          <label>業務内容（任意）</label>
-          <textarea class="row-content" placeholder="わかる範囲で記入"></textarea>
-          <label>気づいたこと（任意）</label>
-          <textarea class="row-note" placeholder="例：〇〇の備品が残り少ない"></textarea>
+        <div class="other-name">${name}</div>
+        <div class="other-btns">
+          ${WORK_STATUS_LIST.map(s => `<div class="other-btn sel-${s}" data-value="${s}">${s}</div>`).join('')}
         </div>`;
-      row.querySelectorAll('.status-btn').forEach(b => {
+      row.querySelectorAll('.other-btn').forEach(b => {
         b.addEventListener('click', function () {
-          row.querySelectorAll('.status-btn').forEach(x => x.classList.remove('selected'));
+          row.querySelectorAll('.other-btn').forEach(x => x.classList.remove('selected'));
           b.classList.add('selected');
-          row.querySelector('.row-detail').style.display = 'block';
         });
       });
       box.appendChild(row);
     });
   }
 
-  // ---- 書くタブ：選んだ日付の既存データを5行に反映 ----
-  function loadWriteRowsData(date) {
+  // ---- 選んだ日付の既存データを反映（自分の分＋他メンバーの勤務区分） ----
+  function loadWriteData(date) {
+    const myname = document.getElementById('w-myname').value;
     const msg = document.getElementById('w-msg');
     msg.className = 'msg';
+
+    jsonp({ action: 'getReportForDate', date: date, name: myname }).then(function (res) {
+      document.getElementById('w-content').value = res.content || '';
+      document.getElementById('w-note').value = res.note || '';
+      document.querySelectorAll('#w-mystatus-btns .status-btn').forEach(b => {
+        b.classList.toggle('selected', b.dataset.value === res.workStatus);
+      });
+      if (res.workStatus) {
+        msg.textContent = 'この日は既に回答済みです。内容を編集して再送信できます。';
+        msg.className = 'msg show info';
+      }
+    });
+
     jsonp({ action: 'getStatusForDate', date: date }).then(function (list) {
       list.forEach(item => {
-        const row = document.querySelector(`.row-card[data-name="${item.name}"]`);
+        if (item.name === myname) return;
+        const row = document.querySelector(`.other-row[data-name="${item.name}"]`);
         if (!row) return;
-        row.querySelectorAll('.status-btn').forEach(b => {
+        row.querySelectorAll('.other-btn').forEach(b => {
           b.classList.toggle('selected', b.dataset.value === item.workStatus);
         });
-        row.querySelector('.row-content').value = item.content || '';
-        row.querySelector('.row-note').value = item.note || '';
-        row.querySelector('.row-detail').style.display = item.workStatus ? 'block' : 'none';
       });
     });
   }
 
-  // ---- 書くタブ：選択済みの行をまとめて送信 ----
-  function submitWriteAll() {
+  // ---- 送信：自分の分（内容含む）＋他メンバーの勤務区分のみ ----
+  function submitWrite() {
     const date = document.getElementById('w-date').value;
+    const myname = document.getElementById('w-myname').value;
+    const content = document.getElementById('w-content').value.trim();
+    const note = document.getElementById('w-note').value.trim();
+    const mySel = document.querySelector('#w-mystatus-btns .status-btn.selected');
     const msg = document.getElementById('w-msg');
-    const rows = Array.from(document.querySelectorAll('.row-card'));
-    const targets = rows.map(row => {
-      const sel = row.querySelector('.status-btn.selected');
-      if (!sel) return null;
-      return {
-        name: row.dataset.name,
-        workStatus: sel.dataset.value,
-        content: row.querySelector('.row-content').value.trim(),
-        note: row.querySelector('.row-note').value.trim()
-      };
-    }).filter(Boolean);
 
-    if (targets.length === 0) {
-      msg.textContent = '勤務区分のボタンを1つ以上押してから送信してください。';
+    if (!mySel) {
+      msg.textContent = 'まずあなたの勤務区分を選んでください。';
       msg.className = 'msg show info';
       return;
     }
+
+    const others = Array.from(document.querySelectorAll('.other-row')).map(row => {
+      const sel = row.querySelector('.other-btn.selected');
+      return sel ? { name: row.dataset.name, workStatus: sel.dataset.value } : null;
+    }).filter(Boolean);
 
     const btn = document.getElementById('w-submit');
     btn.disabled = true;
     btn.textContent = '送信中...';
 
-    Promise.all(targets.map(t =>
-      jsonp({ action: 'submitReport', date: date, name: t.name, workStatus: t.workStatus, content: t.content, note: t.note })
-    )).then(function (results) {
+    const calls = [
+      jsonp({ action: 'submitReport', date: date, name: myname, workStatus: mySel.dataset.value, content: content, note: note })
+    ].concat(others.map(o =>
+      jsonp({ action: 'updateWorkStatusOnly', date: date, name: o.name, workStatus: o.workStatus })
+    ));
+
+    Promise.all(calls).then(function (results) {
       btn.disabled = false;
-      btn.textContent = '入力した分を送信する';
+      btn.textContent = '送信する';
       const failed = results.filter(r => !r.success);
       if (failed.length === 0) {
-        msg.textContent = `${targets.length}名分を送信しました。お疲れ様でした！`;
+        msg.textContent = '送信しました。お疲れ様でした！';
         msg.className = 'msg show ok';
       } else {
         msg.textContent = `一部送信に失敗しました（${failed.length}件）。`;
@@ -500,7 +597,7 @@
       }
     }).catch(function () {
       btn.disabled = false;
-      btn.textContent = '入力した分を送信する';
+      btn.textContent = '送信する';
       msg.textContent = '通信エラーが発生しました';
       msg.className = 'msg show info';
     });
@@ -533,15 +630,11 @@
           document.querySelector('.tab[data-tab="write"]').classList.add('active');
           document.getElementById('panel-write').classList.add('active');
           document.getElementById('w-date').value = date;
-          loadWriteRowsData(date);
-          setTimeout(() => {
-            const target = document.querySelector(`.row-card[data-name="${el.dataset.name}"]`);
-            if (target) {
-              target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              target.style.outline = '2px solid #d4818b';
-              setTimeout(() => { target.style.outline = ''; }, 1800);
-            }
-          }, 300);
+          const nameSel = document.getElementById('w-myname');
+          nameSel.value = el.dataset.name;
+          localStorage.setItem(MYNAME_KEY, el.dataset.name);
+          buildOthersRows();
+          loadWriteData(date);
         });
       });
     });
