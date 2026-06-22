@@ -16,6 +16,7 @@
     --red: #d4707a;
     --blue: #6b8fb8;
     --purple: #9b7fb8;
+    --orange: #d4914a;
     --border: #f0e2de;
   }
   * { box-sizing: border-box; }
@@ -28,262 +29,224 @@
   }
   header {
     background: linear-gradient(135deg, var(--pink), var(--pink-dark));
-    color: white;
-    padding: 22px 20px 18px;
-    text-align: center;
+    color: white; padding: 22px 20px 18px; text-align: center;
   }
   header h1 { margin: 0; font-size: 19px; font-weight: 600; }
-  header p { margin: 4px 0 0; font-size: 12px; opacity: 0.9; }
+  header p  { margin: 4px 0 0; font-size: 12px; opacity: .9; }
 
-  /* ログイン画面 */
+  /* ===== ログイン ===== */
   #loginScreen {
-    max-width: 360px;
-    margin: 60px auto;
-    padding: 28px 24px;
-    background: white;
-    border-radius: 14px;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
-    text-align: center;
+    max-width: 360px; margin: 60px auto; padding: 28px 24px;
+    background: white; border-radius: 14px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.08); text-align: center;
   }
   #loginScreen h2 { font-size: 16px; margin-top: 0; }
   #loginScreen input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    font-size: 16px;
-    margin-top: 14px;
-    text-align: center;
+    width: 100%; padding: 12px; border: 1px solid var(--border);
+    border-radius: 10px; font-size: 16px; margin-top: 14px; text-align: center;
   }
   #loginScreen button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 14px;
-    border: none;
-    border-radius: 10px;
-    background: var(--pink-dark);
-    color: white;
-    font-size: 15px;
-    font-weight: 600;
+    width: 100%; padding: 12px; margin-top: 14px;
+    border: none; border-radius: 10px;
+    background: var(--pink-dark); color: white; font-size: 15px; font-weight: 600; cursor: pointer;
   }
   #loginError { color: var(--red); font-size: 13px; margin-top: 10px; display: none; }
 
   #app { display: none; }
 
+  /* ===== タブ ===== */
   .tabs {
-    display: flex;
-    background: white;
+    display: flex; background: white;
     border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    position: sticky; top: 0; z-index: 10;
   }
   .tab {
-    flex: 1;
-    text-align: center;
-    padding: 13px 4px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--muted);
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
+    flex: 1; text-align: center; padding: 13px 4px;
+    font-size: 13px; font-weight: 600; color: var(--muted);
+    cursor: pointer; border-bottom: 3px solid transparent;
   }
   .tab.active { color: var(--pink-dark); border-bottom: 3px solid var(--pink-dark); }
   .panel { display: none; padding: 18px 16px; max-width: 560px; margin: 0 auto; }
   .panel.active { display: block; }
+
+  /* ===== カード・ラベル ===== */
   .card {
-    background: var(--card);
-    border-radius: 14px;
-    padding: 18px;
-    margin-bottom: 16px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    background: var(--card); border-radius: 14px; padding: 18px;
+    margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.05);
   }
   label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--muted);
-    margin-bottom: 6px;
-    margin-top: 14px;
+    display: block; font-size: 13px; font-weight: 600;
+    color: var(--muted); margin-bottom: 6px; margin-top: 14px;
   }
   label:first-child { margin-top: 0; }
   select, input[type="date"], input[type="month"], textarea {
-    width: 100%;
-    padding: 11px 12px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    font-size: 15px;
-    font-family: inherit;
-    background: #fffdfc;
-    color: var(--text);
+    width: 100%; padding: 11px 12px;
+    border: 1px solid var(--border); border-radius: 10px;
+    font-size: 15px; font-family: inherit; background: #fffdfc; color: var(--text);
   }
   textarea { min-height: 120px; resize: vertical; line-height: 1.6; }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
 
+  /* ===== ボタン ===== */
+  .main-btn {
+    width: 100%; padding: 13px; border: none; border-radius: 10px;
+    background: var(--pink-dark); color: white;
+    font-size: 15px; font-weight: 600; margin-top: 16px; cursor: pointer;
+  }
+  .main-btn.secondary {
+    background: white; color: var(--pink-dark);
+    border: 1.5px solid var(--pink-dark);
+  }
+  button:disabled { opacity: .5; }
+
+  /* ===== 勤務区分ボタン ===== */
   .status-btns { display: flex; gap: 8px; margin-top: 6px; }
   .status-btn {
-    flex: 1;
-    padding: 12px 4px;
-    text-align: center;
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    background: white;
-    color: var(--muted);
+    flex: 1; padding: 12px 4px; text-align: center;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    background: white; color: var(--muted);
   }
-  .status-btn.sel-本社勤務.selected { background: var(--blue); color: white; border-color: var(--blue); }
-  .status-btn.sel-公休.selected { background: #b3a7a3; color: white; border-color: #b3a7a3; }
+  .status-btn.sel-本社勤務.selected  { background: var(--blue);   color: white; border-color: var(--blue);   }
+  .status-btn.sel-公休.selected       { background: #b3a7a3;        color: white; border-color: #b3a7a3;        }
   .status-btn.sel-新宿店勤務.selected { background: var(--purple); color: white; border-color: var(--purple); }
 
-  .row-detail { display: none; margin-top: 10px; }
-  .row-detail label { font-size: 12px; margin-top: 10px; }
-  .row-detail textarea { min-height: 70px; font-size: 14px; }
+  /* ===== メッセージ ===== */
+  .msg { margin-top: 12px; padding: 10px 12px; border-radius: 8px; font-size: 13px; display: none; }
+  .msg.show { display: block; }
+  .msg.ok   { background: #e9f5ec; color: var(--green); }
+  .msg.info { background: #fdf1e9; color: var(--orange); }
 
+  /* ===== 本社コメントバナー（書くタブ） ===== */
+  .my-comment-banner {
+    background: linear-gradient(135deg, #fff4e6, #fde8d0);
+    border: 1.5px solid #e8b87a;
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; cursor: pointer;
+  }
+  .my-comment-banner .banner-head {
+    font-size: 13px; font-weight: 700; color: var(--orange); display: flex; align-items: center; gap: 6px;
+  }
+  .my-comment-banner .banner-body {
+    font-size: 13px; color: #7a5a3a; margin-top: 8px;
+    white-space: pre-wrap; line-height: 1.5; display: none;
+  }
+
+  /* ===== 他メンバー折りたたみ ===== */
   .expander-head {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--pink-dark);
-    cursor: pointer;
-    user-select: none;
+    font-size: 13px; font-weight: 700; color: var(--pink-dark); cursor: pointer; user-select: none;
   }
   .other-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border);
   }
   .other-row:last-child { border-bottom: none; }
   .other-name { font-size: 13px; font-weight: 700; flex-shrink: 0; width: 84px; }
   .other-btns { display: flex; gap: 6px; flex: 1; }
   .other-btn {
-    flex: 1;
-    text-align: center;
-    padding: 8px 2px;
-    font-size: 11px;
-    font-weight: 700;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    cursor: pointer;
-    color: var(--muted);
-    background: white;
+    flex: 1; text-align: center; padding: 8px 2px;
+    font-size: 11px; font-weight: 700;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    cursor: pointer; color: var(--muted); background: white;
   }
-  .other-btn.sel-本社勤務.selected { background: var(--blue); color: white; border-color: var(--blue); }
-  .other-btn.sel-公休.selected { background: #b3a7a3; color: white; border-color: #b3a7a3; }
+  .other-btn.sel-本社勤務.selected  { background: var(--blue);   color: white; border-color: var(--blue);   }
+  .other-btn.sel-公休.selected       { background: #b3a7a3;        color: white; border-color: #b3a7a3;        }
   .other-btn.sel-新宿店勤務.selected { background: var(--purple); color: white; border-color: var(--purple); }
 
-  button.main-btn {
-    width: 100%;
-    padding: 13px;
-    border: none;
-    border-radius: 10px;
-    background: var(--pink-dark);
-    color: white;
-    font-size: 15px;
-    font-weight: 600;
-    margin-top: 16px;
-    cursor: pointer;
+  /* ===== 確認タブ：日次ビュー ===== */
+  .status-row {
+    display: flex; align-items: flex-start;
+    padding: 12px 0; border-bottom: 1px solid var(--border); gap: 10px;
   }
-  button.secondary {
-    background: white;
-    color: var(--pink-dark);
-    border: 1.5px solid var(--pink-dark);
-  }
-  button:disabled { opacity: 0.5; }
-
-  .msg { margin-top: 12px; padding: 10px 12px; border-radius: 8px; font-size: 13px; display: none; }
-  .msg.show { display: block; }
-  .msg.ok { background: #e9f5ec; color: var(--green); }
-  .msg.info { background: #fdf1e9; color: #b8794a; }
-
-  .status-row { display: flex; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 10px; }
   .status-row:last-child { border-bottom: none; }
-  .badge { flex-shrink: 0; width: 72px; text-align: center; font-size: 11px; font-weight: 700; padding: 5px 2px; border-radius: 6px; margin-top: 2px; }
-  .badge.本社勤務 { background: #e8eef5; color: var(--blue); }
-  .badge.公休 { background: #efeceb; color: #8a7d79; }
+  .badge {
+    flex-shrink: 0; width: 72px; text-align: center;
+    font-size: 11px; font-weight: 700; padding: 5px 2px; border-radius: 6px; margin-top: 2px;
+  }
+  .badge.本社勤務  { background: #e8eef5; color: var(--blue);   }
+  .badge.公休       { background: #efeceb; color: #8a7d79;        }
   .badge.新宿店勤務 { background: #f1ebf5; color: var(--purple); }
-  .badge.未回答 { background: #fbe9eb; color: var(--red); }
+  .badge.未回答     { background: #fbe9eb; color: var(--red);    }
   .status-body { flex: 1; min-width: 0; }
-  .status-name { font-weight: 700; font-size: 14px; margin-bottom: 3px; }
-  .status-content { font-size: 13px; color: #6b5e5b; white-space: pre-wrap; line-height: 1.5; }
-  .status-note { font-size: 12px; color: #b8794a; margin-top: 4px; white-space: pre-wrap; }
   .status-name-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-  .check-btn {
-    flex-shrink: 0;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 5px 10px;
-    border-radius: 8px;
-    border: 1.5px solid var(--border);
-    color: var(--muted);
-    cursor: pointer;
-    white-space: nowrap;
-    background: white;
+  .status-name  { font-weight: 700; font-size: 14px; }
+  .status-content { font-size: 13px; color: #6b5e5b; white-space: pre-wrap; line-height: 1.5; margin-top: 4px; }
+  .status-content.empty { color: var(--muted); font-style: italic; }
+  .status-note  { font-size: 12px; color: #b8794a; margin-top: 4px; white-space: pre-wrap; }
+  .edit-link    { font-size: 12px; color: var(--pink-dark); text-decoration: underline; cursor: pointer; margin-top: 6px; display: inline-block; }
+  .check-inline {
+    flex-shrink: 0; font-size: 11px; font-weight: 700; padding: 4px 8px;
+    border-radius: 7px; border: 1.5px solid var(--border);
+    color: var(--muted); cursor: pointer; background: white; white-space: nowrap;
   }
-  .check-btn.checked { background: var(--green); color: white; border-color: var(--green); }
-  .comment-box {
-    margin-top: 8px;
-    padding: 8px 10px;
-    background: #fdf1e9;
-    border-radius: 8px;
-    font-size: 12px;
-    color: #8a6a4a;
-    white-space: pre-wrap;
-    line-height: 1.5;
+  .check-inline.checked { background: var(--green); color: white; border-color: var(--green); }
+
+  /* ===== 確認タブ：月次グリッド ===== */
+  table.grid { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
+  table.grid th, table.grid td {
+    border: 1px solid var(--border); text-align: center; padding: 5px 2px;
   }
-  .comment-toggle { font-size: 12px; color: var(--pink-dark); text-decoration: underline; cursor: pointer; margin-top: 4px; margin-left: 12px; display: inline-block; }
+  table.grid th { background: #fdf1ee; font-weight: 700; color: var(--pink-dark); }
+  table.grid td.date-cell { text-align: left; font-weight: 600; white-space: nowrap; padding-left: 6px; }
+  .grid-cell {
+    cursor: pointer; position: relative; padding: 5px 2px !important;
+    transition: background .15s;
+  }
+  .grid-cell:active { opacity: .7; }
+  .mk-本社勤務  { color: var(--blue);   font-weight: 700; }
+  .mk-公休       { color: #8a7d79;        font-weight: 700; }
+  .mk-新宿店勤務 { color: var(--purple); font-weight: 700; }
+  .mk-未          { color: var(--red);    font-weight: 700; }
+  .cell-chk { font-size: 9px; color: var(--green); font-weight: 700; display: block; }
+
+  /* ===== コメント（確認タブ・人単位） ===== */
+  .comment-section { margin-top: 16px; }
+  .comment-section-title {
+    font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 8px;
+  }
+  .comment-row {
+    background: #fffbf6; border: 1px solid #f0d8b8;
+    border-radius: 10px; padding: 12px 14px; margin-bottom: 8px;
+  }
+  .comment-row-name  { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .comment-row-text  { font-size: 13px; white-space: pre-wrap; line-height: 1.5; }
+  .comment-row-from  { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .comment-edit-link { font-size: 12px; color: var(--pink-dark); text-decoration: underline; cursor: pointer; margin-top: 4px; display: inline-block; }
   .comment-form { display: none; margin-top: 8px; }
   .comment-form input {
-    width: 100%; padding: 8px 10px; border: 1px solid var(--border);
-    border-radius: 8px; font-size: 13px; margin-bottom: 6px; font-family: inherit;
+    width: 100%; padding: 8px 10px;
+    border: 1px solid var(--border); border-radius: 8px;
+    font-size: 13px; margin-bottom: 6px; font-family: inherit;
   }
   .comment-form textarea { min-height: 60px; font-size: 13px; }
   .comment-form button {
-    margin-top: 8px; padding: 9px; width: 100%; border: none; border-radius: 8px;
-    background: var(--pink-dark); color: white; font-size: 13px; font-weight: 700; cursor: pointer;
+    margin-top: 8px; padding: 9px; width: 100%;
+    border: none; border-radius: 8px;
+    background: var(--orange); color: white; font-size: 13px; font-weight: 700; cursor: pointer;
   }
-  .my-comment-box {
-    background: #fdf1e9;
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 14px;
-    font-size: 14px;
-    color: #8a6a4a;
-    white-space: pre-wrap;
-    line-height: 1.6;
-  }
-  .my-comment-box b { color: var(--pink-dark); }
-  .status-content.empty { color: var(--muted); font-style: italic; }
-  .edit-link { font-size: 12px; color: var(--pink-dark); text-decoration: underline; cursor: pointer; margin-top: 4px; display: inline-block; }
 
-  table.grid { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
-  table.grid th, table.grid td { border: 1px solid var(--border); text-align: center; padding: 5px 2px; }
-  table.grid th { background: #fdf1ee; font-weight: 700; color: var(--pink-dark); }
-  table.grid td.date-cell { text-align: left; font-weight: 600; white-space: nowrap; padding-left: 6px; }
-  .mk-本社勤務 { color: var(--blue); font-weight: 700; }
-  .mk-公休 { color: #8a7d79; font-weight: 700; }
-  .mk-新宿店勤務 { color: var(--purple); font-weight: 700; }
-  .mk-未 { color: var(--red); font-weight: 700; }
-
+  /* ===== まとめるタブ ===== */
   #exportPreview { background: white; padding: 20px 18px; border-radius: 10px; }
-  #exportPreview h2 { font-size: 16px; margin: 0 0 14px; color: var(--pink-dark); border-bottom: 2px solid var(--pink-dark); padding-bottom: 8px; }
+  #exportPreview h2 {
+    font-size: 16px; margin: 0 0 14px; color: var(--pink-dark);
+    border-bottom: 2px solid var(--pink-dark); padding-bottom: 8px;
+  }
   .export-block { margin-bottom: 16px; }
-  .export-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
-  .export-status { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; margin-left: 6px; }
+  .export-name   { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .export-status {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    padding: 2px 8px; border-radius: 6px; margin-left: 6px;
+  }
   .export-text { font-size: 13px; white-space: pre-wrap; line-height: 1.6; padding-left: 4px; border-left: 3px solid var(--border); margin-top: 6px; }
   .export-text.empty { color: var(--muted); font-style: italic; border-left-color: #fbe9eb; }
   .export-note { font-size: 12px; color: #b8794a; margin-top: 6px; }
   .btn-row { display: flex; gap: 10px; margin-top: 16px; }
   .btn-row button { margin-top: 0; }
   .loading { text-align: center; color: var(--muted); font-size: 13px; padding: 20px 0; }
-  .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
 </style>
 </head>
 <body>
 
-<!-- ===== ログイン画面 ===== -->
+<!-- ===== ログイン ===== -->
 <div id="loginScreen">
   <h2>銀座店 日報</h2>
   <p style="font-size:13px;color:#9c8d8a;">共通パスワードを入力してください</p>
@@ -305,30 +268,27 @@
     <div class="tab" data-tab="export">まとめる</div>
   </div>
 
-  <!-- 書く -->
+  <!-- ===== 書くタブ ===== -->
   <div class="panel active" id="panel-write">
     <div class="card">
       <label>日付</label>
       <input type="date" id="w-date">
-
       <label>あなたの名前</label>
       <select id="w-myname"></select>
     </div>
 
+    <div id="w-comment-banner" style="display:none;"></div>
+
     <div class="card">
-      <div id="w-comment-box" style="display:none;"></div>
       <label>勤務区分</label>
       <div class="status-btns" id="w-mystatus-btns"></div>
-
       <label>業務内容</label>
       <textarea id="w-content" placeholder="例：
 ・〇〇対応
 ・〇〇ミーティング
 ・サンプル作成"></textarea>
-
       <label>気づいたこと（任意）</label>
       <textarea id="w-note" placeholder="例：〇〇の備品が残り少ない" style="min-height:70px;"></textarea>
-
       <button class="main-btn" id="w-submit">送信する</button>
       <div class="msg" id="w-msg"></div>
     </div>
@@ -339,23 +299,33 @@
     </div>
   </div>
 
-  <!-- 確認・過去 -->
+  <!-- ===== 確認・過去タブ ===== -->
   <div class="panel" id="panel-check">
     <div class="card">
       <label>日付を選んで確認</label>
       <input type="date" id="c-date">
       <div id="c-status" style="margin-top:14px;"></div>
     </div>
+
     <div class="card">
       <label>月ごとの勤務区分一覧</label>
-      <div class="hint">1ヶ月分をまとめて見て、未回答の人がいないか確認できます</div>
+      <div class="hint">セルをタップでチェック済みのオン/オフができます</div>
       <input type="month" id="c-month" style="margin-top:10px;">
-      <div class="hint" style="margin-top:8px;">本社＝本社勤務／公休＝公休／新宿＝新宿店勤務／<span class="mk-未">未</span>＝未回答</div>
+      <div class="hint" style="margin-top:8px;">
+        本社＝本社勤務／公休＝公休／新宿＝新宿店勤務／<span class="mk-未">未</span>＝未回答　
+        <span style="color:var(--green);font-weight:700;">✓</span>＝チェック済み
+      </div>
       <div id="c-grid"></div>
+    </div>
+
+    <div class="card comment-section">
+      <div class="comment-section-title">💬 スタッフへのコメント（人単位）</div>
+      <div class="hint">コメントを入れると、そのスタッフが「書く」タブを開いたときに通知が届きます。スプレッドシートには全履歴が保存されます。</div>
+      <div id="c-comments" style="margin-top:12px;"></div>
     </div>
   </div>
 
-  <!-- まとめる -->
+  <!-- ===== まとめるタブ ===== -->
   <div class="panel" id="panel-export">
     <div class="card">
       <label>まとめる日付</label>
@@ -374,466 +344,536 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-  // ▼▼▼ ここをGASのウェブアプリURLに置き換えてください ▼▼▼
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbxyaUOrA7V6mvx2rOjwC9Gg-y2rIGvVmo58lbjSQDzreP_9g5n0KTIDkYS4kOk7SVyVjw/exec';
-  // ▲▲▲ ここまで ▲▲▲
+// ▼▼▼ GASのウェブアプリURLをここに貼る ▼▼▼
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxyaUOrA7V6mvx2rOjwC9Gg-y2rIGvVmo58lbjSQDzreP_9g5n0KTIDkYS4kOk7SVyVjw/exec';
+// ▲▲▲ ここまで ▲▲▲
 
-  const STORAGE_KEY = 'ginza_nippou_pw';
-  let STAFF = [];
-  let WORK_STATUS_LIST = ['本社勤務', '公休', '新宿店勤務'];
+const STORAGE_KEY = 'ginza_nippou_pw';
+const MYNAME_KEY  = 'ginza_nippou_myname';
+let STAFF = [];
+let WORK_STATUS_LIST = ['本社勤務', '公休', '新宿店勤務'];
 
-  // ---- JSONP共通関数 ----
-  let jsonpCounter = 0;
-  function jsonp(params) {
-    return new Promise(function (resolve, reject) {
-      const cbName = 'jsonp_cb_' + (jsonpCounter++);
-      params.callback = cbName;
-      const pw = sessionStorage.getItem(STORAGE_KEY);
-      if (pw) params.pw = pw;
-      const qs = Object.keys(params).map(function (k) {
-        return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
-      }).join('&');
-      const script = document.createElement('script');
-      script.src = GAS_URL + '?' + qs;
-      window[cbName] = function (data) {
-        resolve(data);
-        delete window[cbName];
-        script.remove();
-      };
-      script.onerror = function () {
-        reject(new Error('通信に失敗しました'));
-        delete window[cbName];
-        script.remove();
-      };
-      document.body.appendChild(script);
-    });
-  }
+// ============================================================
+// JSONP
+// ============================================================
+let jsonpCounter = 0;
+function jsonp(params) {
+  return new Promise(function(resolve, reject) {
+    const cbName = 'jsonp_cb_' + (jsonpCounter++);
+    params.callback = cbName;
+    const pw = sessionStorage.getItem(STORAGE_KEY);
+    if (pw) params.pw = pw;
+    const qs = Object.keys(params).map(k =>
+      encodeURIComponent(k) + '=' + encodeURIComponent(params[k])
+    ).join('&');
+    const script = document.createElement('script');
+    script.src = GAS_URL + '?' + qs;
+    window[cbName] = function(data) { resolve(data); delete window[cbName]; script.remove(); };
+    script.onerror = function() { reject(new Error('通信に失敗しました')); delete window[cbName]; script.remove(); };
+    document.body.appendChild(script);
+  });
+}
 
-  const todayStr = () => {
-    const d = new Date();
-    const pad = n => String(n).padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-  };
-  const thisMonthStr = () => {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-  };
-  const youbi = ['日','月','火','水','木','金','土'];
-  const fmtJP = (dateStr) => {
-    const d = new Date(dateStr + 'T00:00:00');
-    return `${d.getMonth()+1}/${d.getDate()}(${youbi[d.getDay()]})`;
-  };
-  function escapeHtml(s) {
-    return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
+// ============================================================
+// ユーティリティ
+// ============================================================
+const todayStr = () => {
+  const d = new Date(), pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+};
+const thisMonthStr = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+};
+const youbi = ['日','月','火','水','木','金','土'];
+const fmtJP = dateStr => {
+  const d = new Date(dateStr + 'T00:00:00');
+  return `${d.getMonth()+1}/${d.getDate()}(${youbi[d.getDay()]})`;
+};
+function escapeHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
-  // ---- ログイン ----
-  document.getElementById('loginBtn').addEventListener('click', doLogin);
-  document.getElementById('loginPw').addEventListener('keydown', function(e){ if (e.key === 'Enter') doLogin(); });
+// ============================================================
+// ログイン
+// ============================================================
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('loginPw').addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
 
-  function doLogin() {
-    const pw = document.getElementById('loginPw').value;
-    sessionStorage.setItem(STORAGE_KEY, pw);
-    jsonp({ action: 'checkPassword', pw: pw }).then(function (res) {
-      if (res.valid) {
-        localStorage.setItem(STORAGE_KEY, pw);
-        startApp();
-      } else {
-        document.getElementById('loginError').style.display = 'block';
-        sessionStorage.removeItem(STORAGE_KEY);
-      }
-    }).catch(function () {
-      document.getElementById('loginError').textContent = '通信エラーが発生しました';
+function doLogin() {
+  const pw = document.getElementById('loginPw').value;
+  sessionStorage.setItem(STORAGE_KEY, pw);
+  jsonp({ action:'checkPassword', pw }).then(res => {
+    if (res.valid) { localStorage.setItem(STORAGE_KEY, pw); startApp(); }
+    else {
       document.getElementById('loginError').style.display = 'block';
-    });
-  }
-
-  // 前回ログイン済みなら自動で入る
-  (function () {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      sessionStorage.setItem(STORAGE_KEY, saved);
-      jsonp({ action: 'checkPassword', pw: saved }).then(function (res) {
-        if (res.valid) startApp();
-      }).catch(function(){});
+      sessionStorage.removeItem(STORAGE_KEY);
     }
-  })();
-
-  function startApp() {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    initApp();
+  }).catch(() => {
+    document.getElementById('loginError').textContent = '通信エラーが発生しました';
+    document.getElementById('loginError').style.display = 'block';
+  });
+}
+(function() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    sessionStorage.setItem(STORAGE_KEY, saved);
+    jsonp({ action:'checkPassword', pw:saved }).then(res => { if (res.valid) startApp(); }).catch(()=>{});
   }
+})();
 
-  // ---- アプリ初期化 ----
-  let appInitialized = false;
-  const MYNAME_KEY = 'ginza_nippou_myname';
+function startApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initApp();
+}
 
-  function initApp() {
-    if (appInitialized) return;
-    appInitialized = true;
+// ============================================================
+// アプリ初期化
+// ============================================================
+let appInitialized = false;
+function initApp() {
+  if (appInitialized) return;
+  appInitialized = true;
 
-    jsonp({ action: 'getStaffNames' }).then(function (res) {
-      STAFF = res.staff;
-      WORK_STATUS_LIST = res.workStatusList;
+  jsonp({ action:'getStaffNames' }).then(res => {
+    STAFF = res.staff;
+    WORK_STATUS_LIST = res.workStatusList;
 
-      const sel = document.getElementById('w-myname');
-      STAFF.forEach(n => {
-        const o = document.createElement('option');
-        o.value = n; o.textContent = n;
-        sel.appendChild(o);
-      });
-      const saved = localStorage.getItem(MYNAME_KEY);
-      if (saved && STAFF.includes(saved)) sel.value = saved;
-
-      buildMyStatusButtons();
-      buildOthersRows();
-      loadWriteData(document.getElementById('w-date').value);
-
-      refreshCheck();
-      refreshGrid();
+    const sel = document.getElementById('w-myname');
+    STAFF.forEach(n => {
+      const o = document.createElement('option');
+      o.value = n; o.textContent = n; sel.appendChild(o);
     });
+    const saved = localStorage.getItem(MYNAME_KEY);
+    if (saved && STAFF.includes(saved)) sel.value = saved;
 
-    document.getElementById('w-date').value = todayStr();
-    document.getElementById('c-date').value = todayStr();
-    document.getElementById('e-date').value = todayStr();
-    document.getElementById('c-month').value = thisMonthStr();
+    buildMyStatusButtons();
+    buildOthersRows();
+    loadWriteData(document.getElementById('w-date').value);
+    refreshCheck();
+    refreshGrid();
+    refreshComments();
+  });
 
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
-      });
-    });
+  document.getElementById('w-date').value    = todayStr();
+  document.getElementById('c-date').value    = todayStr();
+  document.getElementById('e-date').value    = todayStr();
+  document.getElementById('c-month').value   = thisMonthStr();
 
-    document.getElementById('w-date').addEventListener('change', function () {
-      loadWriteData(this.value);
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
     });
-    document.getElementById('w-myname').addEventListener('change', function () {
-      localStorage.setItem(MYNAME_KEY, this.value);
-      buildOthersRows();
-      loadWriteData(document.getElementById('w-date').value);
-    });
-    document.getElementById('w-expander-head').addEventListener('click', function () {
-      const box = document.getElementById('w-others');
-      const open = box.style.display === 'block';
-      box.style.display = open ? 'none' : 'block';
-      this.textContent = 'ほかのメンバーの勤務区分も入力する（任意） ' + (open ? '▾' : '▴');
-    });
-    document.getElementById('w-submit').addEventListener('click', submitWrite);
-    document.getElementById('c-date').addEventListener('change', refreshCheck);
-    document.getElementById('c-month').addEventListener('change', refreshGrid);
-    document.getElementById('e-build').addEventListener('click', buildExport);
-    document.getElementById('e-download-text').addEventListener('click', downloadText);
-    document.getElementById('e-download-image').addEventListener('click', downloadImage);
-  }
+  });
 
-  // ---- 自分用の勤務区分ボタン ----
-  function buildMyStatusButtons() {
-    const box = document.getElementById('w-mystatus-btns');
-    box.innerHTML = '';
-    WORK_STATUS_LIST.forEach(s => {
-      const b = document.createElement('div');
-      b.className = 'status-btn sel-' + s;
-      b.textContent = s;
-      b.dataset.value = s;
-      b.addEventListener('click', function () {
-        box.querySelectorAll('.status-btn').forEach(x => x.classList.remove('selected'));
+  document.getElementById('w-date').addEventListener('change', () => loadWriteData(document.getElementById('w-date').value));
+  document.getElementById('w-myname').addEventListener('change', () => {
+    localStorage.setItem(MYNAME_KEY, document.getElementById('w-myname').value);
+    buildOthersRows();
+    loadWriteData(document.getElementById('w-date').value);
+  });
+  document.getElementById('w-expander-head').addEventListener('click', function() {
+    const box = document.getElementById('w-others');
+    const open = box.style.display === 'block';
+    box.style.display = open ? 'none' : 'block';
+    this.textContent = 'ほかのメンバーの勤務区分も入力する（任意） ' + (open ? '▾' : '▴');
+  });
+  document.getElementById('w-submit').addEventListener('click', submitWrite);
+  document.getElementById('c-date').addEventListener('change', refreshCheck);
+  document.getElementById('c-month').addEventListener('change', refreshGrid);
+  document.getElementById('e-build').addEventListener('click', buildExport);
+  document.getElementById('e-download-text').addEventListener('click', downloadText);
+  document.getElementById('e-download-image').addEventListener('click', downloadImage);
+}
+
+// ============================================================
+// 書くタブ
+// ============================================================
+function buildMyStatusButtons() {
+  const box = document.getElementById('w-mystatus-btns');
+  box.innerHTML = '';
+  WORK_STATUS_LIST.forEach(s => {
+    const b = document.createElement('div');
+    b.className = 'status-btn sel-' + s;
+    b.textContent = s; b.dataset.value = s;
+    b.addEventListener('click', () => {
+      box.querySelectorAll('.status-btn').forEach(x => x.classList.remove('selected'));
+      b.classList.add('selected');
+    });
+    box.appendChild(b);
+  });
+}
+
+function buildOthersRows() {
+  const myname = document.getElementById('w-myname').value;
+  const box    = document.getElementById('w-others');
+  box.innerHTML = '';
+  STAFF.filter(n => n !== myname).forEach(name => {
+    const row = document.createElement('div');
+    row.className = 'other-row'; row.dataset.name = name;
+    row.innerHTML = `
+      <div class="other-name">${name}</div>
+      <div class="other-btns">
+        ${WORK_STATUS_LIST.map(s => `<div class="other-btn sel-${s}" data-value="${s}">${s}</div>`).join('')}
+      </div>`;
+    row.querySelectorAll('.other-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        row.querySelectorAll('.other-btn').forEach(x => x.classList.remove('selected'));
         b.classList.add('selected');
       });
-      box.appendChild(b);
     });
+    box.appendChild(row);
+  });
+}
+
+function loadWriteData(date) {
+  const myname = document.getElementById('w-myname').value;
+  const msg    = document.getElementById('w-msg');
+  msg.className = 'msg';
+
+  // 自分の日報 + コメント
+  jsonp({ action:'getReportForDate', date, name:myname }).then(res => {
+    document.getElementById('w-content').value = res.content || '';
+    document.getElementById('w-note').value    = res.note    || '';
+    document.querySelectorAll('#w-mystatus-btns .status-btn').forEach(b =>
+      b.classList.toggle('selected', b.dataset.value === res.workStatus)
+    );
+    if (res.workStatus) {
+      msg.textContent = 'この日は既に回答済みです。内容を編集して再送信できます。';
+      msg.className   = 'msg show info';
+    }
+  });
+
+  // 本社からのコメントバナー
+  jsonp({ action:'getPersonComment', name:myname }).then(res => {
+    const banner = document.getElementById('w-comment-banner');
+    if (res.comment) {
+      banner.style.display = 'block';
+      banner.innerHTML = `
+        <div class="my-comment-banner" id="w-banner-inner">
+          <div class="banner-head">💬 本社からコメントが届いています　▾</div>
+          <div class="banner-body">${res.commenter ? '<b>' + escapeHtml(res.commenter) + '</b>：' : ''}${escapeHtml(res.comment)}</div>
+        </div>`;
+      document.getElementById('w-banner-inner').addEventListener('click', function() {
+        const body = this.querySelector('.banner-body');
+        const open = body.style.display === 'block';
+        body.style.display = open ? 'none' : 'block';
+        this.querySelector('.banner-head').textContent =
+          '💬 本社からコメントが届いています　' + (open ? '▾' : '▴');
+      });
+    } else {
+      banner.style.display = 'none';
+    }
+  });
+
+  // 他メンバーの勤務区分を読み込む
+  jsonp({ action:'getStatusForDate', date }).then(list => {
+    list.forEach(item => {
+      if (item.name === myname) return;
+      const row = document.querySelector(`.other-row[data-name="${item.name}"]`);
+      if (!row) return;
+      row.querySelectorAll('.other-btn').forEach(b =>
+        b.classList.toggle('selected', b.dataset.value === item.workStatus)
+      );
+    });
+  });
+}
+
+function submitWrite() {
+  const date    = document.getElementById('w-date').value;
+  const myname  = document.getElementById('w-myname').value;
+  const content = document.getElementById('w-content').value.trim();
+  const note    = document.getElementById('w-note').value.trim();
+  const mySel   = document.querySelector('#w-mystatus-btns .status-btn.selected');
+  const msg     = document.getElementById('w-msg');
+
+  if (!mySel) {
+    msg.textContent = 'まずあなたの勤務区分を選んでください。';
+    msg.className   = 'msg show info';
+    return;
   }
 
-  // ---- ほかのメンバーのコンパクト行（自分以外）を作る ----
-  function buildOthersRows() {
-    const myname = document.getElementById('w-myname').value;
-    const box = document.getElementById('w-others');
+  const others = Array.from(document.querySelectorAll('.other-row')).map(row => {
+    const sel = row.querySelector('.other-btn.selected');
+    return sel ? { name:row.dataset.name, workStatus:sel.dataset.value } : null;
+  }).filter(Boolean);
+
+  const btn = document.getElementById('w-submit');
+  btn.disabled = true; btn.textContent = '送信中...';
+
+  const calls = [
+    jsonp({ action:'submitReport', date, name:myname, workStatus:mySel.dataset.value, content, note })
+  ].concat(others.map(o =>
+    jsonp({ action:'updateWorkStatusOnly', date, name:o.name, workStatus:o.workStatus })
+  ));
+
+  Promise.all(calls).then(results => {
+    btn.disabled = false; btn.textContent = '送信する';
+    const failed = results.filter(r => !r.success);
+    msg.textContent = failed.length === 0 ? '送信しました。お疲れ様でした！' : `一部送信に失敗しました（${failed.length}件）。`;
+    msg.className   = 'msg show ' + (failed.length === 0 ? 'ok' : 'info');
+  }).catch(() => {
+    btn.disabled = false; btn.textContent = '送信する';
+    msg.textContent = '通信エラーが発生しました'; msg.className = 'msg show info';
+  });
+}
+
+// ============================================================
+// 確認タブ：日次ビュー
+// ============================================================
+function refreshCheck() {
+  const date = document.getElementById('c-date').value;
+  const box  = document.getElementById('c-status');
+  box.innerHTML = '<div class="loading">読み込み中...</div>';
+  jsonp({ action:'getStatusForDate', date }).then(list => {
     box.innerHTML = '';
-    STAFF.filter(n => n !== myname).forEach(name => {
+    list.forEach(item => {
+      const statusLabel = item.workStatus || '未回答';
       const row = document.createElement('div');
-      row.className = 'other-row';
-      row.dataset.name = name;
+      row.className = 'status-row';
       row.innerHTML = `
-        <div class="other-name">${name}</div>
-        <div class="other-btns">
-          ${WORK_STATUS_LIST.map(s => `<div class="other-btn sel-${s}" data-value="${s}">${s}</div>`).join('')}
+        <div class="badge ${statusLabel}">${statusLabel}</div>
+        <div class="status-body">
+          <div class="status-name-row">
+            <div class="status-name">${item.name}</div>
+            <div class="check-inline ${item.checked?'checked':''}" data-name="${item.name}">
+              ${item.checked ? '✓ チェック済み' : '本社チェック'}
+            </div>
+          </div>
+          <div class="status-content ${item.content?'':'empty'}">
+            ${item.content ? escapeHtml(item.content) : (item.submitted ? '（業務内容の記入なし）' : 'まだ回答されていません')}
+          </div>
+          ${item.note ? `<div class="status-note">気づき：${escapeHtml(item.note)}</div>` : ''}
+          <span class="edit-link" data-name="${item.name}">${item.submitted ? 'この日報を編集する' : 'この日報を書く'}</span>
         </div>`;
-      row.querySelectorAll('.other-btn').forEach(b => {
-        b.addEventListener('click', function () {
-          row.querySelectorAll('.other-btn').forEach(x => x.classList.remove('selected'));
-          b.classList.add('selected');
-        });
-      });
       box.appendChild(row);
     });
-  }
 
-  // ---- 選んだ日付の既存データを反映（自分の分＋他メンバーの勤務区分） ----
-  function loadWriteData(date) {
-    const myname = document.getElementById('w-myname').value;
-    const msg = document.getElementById('w-msg');
-    msg.className = 'msg';
-
-    jsonp({ action: 'getReportForDate', date: date, name: myname }).then(function (res) {
-      document.getElementById('w-content').value = res.content || '';
-      document.getElementById('w-note').value = res.note || '';
-      document.querySelectorAll('#w-mystatus-btns .status-btn').forEach(b => {
-        b.classList.toggle('selected', b.dataset.value === res.workStatus);
-      });
-      if (res.workStatus) {
-        msg.textContent = 'この日は既に回答済みです。内容を編集して再送信できます。';
-        msg.className = 'msg show info';
-      }
-      const commentBox = document.getElementById('w-comment-box');
-      if (res.comment) {
-        commentBox.style.display = 'block';
-        commentBox.className = 'my-comment-box';
-        commentBox.innerHTML = `💬 <b>${res.commenter ? escapeHtml(res.commenter) : '本社'}より：</b><br>${escapeHtml(res.comment)}`;
-      } else {
-        commentBox.style.display = 'none';
-      }
+    // 編集リンク
+    box.querySelectorAll('.edit-link').forEach(el => {
+      el.addEventListener('click', () => jumpToWrite(date, el.dataset.name));
     });
 
-    jsonp({ action: 'getStatusForDate', date: date }).then(function (list) {
-      list.forEach(item => {
-        if (item.name === myname) return;
-        const row = document.querySelector(`.other-row[data-name="${item.name}"]`);
-        if (!row) return;
-        row.querySelectorAll('.other-btn').forEach(b => {
-          b.classList.toggle('selected', b.dataset.value === item.workStatus);
-        });
-      });
+    // チェックボタン（日次）
+    box.querySelectorAll('.check-inline').forEach(el => {
+      el.addEventListener('click', () => toggleCheck(date, el.dataset.name, el));
     });
-  }
+  });
+}
 
-  // ---- 送信：自分の分（内容含む）＋他メンバーの勤務区分のみ ----
-  function submitWrite() {
-    const date = document.getElementById('w-date').value;
-    const myname = document.getElementById('w-myname').value;
-    const content = document.getElementById('w-content').value.trim();
-    const note = document.getElementById('w-note').value.trim();
-    const mySel = document.querySelector('#w-mystatus-btns .status-btn.selected');
-    const msg = document.getElementById('w-msg');
+function toggleCheck(date, name, el) {
+  const nowChecked = !el.classList.contains('checked');
+  el.textContent = '処理中...';
+  jsonp({ action:'setChecked', date, name, checked: nowChecked ? 'true' : 'false' }).then(() => {
+    el.classList.toggle('checked', nowChecked);
+    el.textContent = nowChecked ? '✓ チェック済み' : '本社チェック';
+    // グリッドも更新
+    refreshGrid();
+  });
+}
 
-    if (!mySel) {
-      msg.textContent = 'まずあなたの勤務区分を選んでください。';
-      msg.className = 'msg show info';
+function jumpToWrite(date, name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelector('.tab[data-tab="write"]').classList.add('active');
+  document.getElementById('panel-write').classList.add('active');
+  document.getElementById('w-date').value = date;
+  const sel = document.getElementById('w-myname');
+  sel.value = name;
+  localStorage.setItem(MYNAME_KEY, name);
+  buildOthersRows();
+  loadWriteData(date);
+}
+
+// ============================================================
+// 確認タブ：月次グリッド（セルタップでチェック切り替え）
+// ============================================================
+const abbr = { '本社勤務':'本社', '公休':'公休', '新宿店勤務':'新宿' };
+
+function refreshGrid() {
+  const ym  = document.getElementById('c-month').value;
+  const box = document.getElementById('c-grid');
+  box.innerHTML = '<div class="loading">読み込み中...</div>';
+  jsonp({ action:'getMonthStatus', month:ym }).then(data => {
+    const dates = Object.keys(data).sort();
+    if (dates.length === 0) {
+      box.innerHTML = '<div class="loading">この月の回答はまだありません</div>';
       return;
     }
+    // テーブル生成
+    const table = document.createElement('table');
+    table.className = 'grid';
+    const headRow = document.createElement('tr');
+    headRow.innerHTML = '<th>日付</th>' + STAFF.map(n => `<th>${n}</th>`).join('');
+    table.appendChild(headRow);
 
-    const others = Array.from(document.querySelectorAll('.other-row')).map(row => {
-      const sel = row.querySelector('.other-btn.selected');
-      return sel ? { name: row.dataset.name, workStatus: sel.dataset.value } : null;
-    }).filter(Boolean);
-
-    const btn = document.getElementById('w-submit');
-    btn.disabled = true;
-    btn.textContent = '送信中...';
-
-    const calls = [
-      jsonp({ action: 'submitReport', date: date, name: myname, workStatus: mySel.dataset.value, content: content, note: note })
-    ].concat(others.map(o =>
-      jsonp({ action: 'updateWorkStatusOnly', date: date, name: o.name, workStatus: o.workStatus })
-    ));
-
-    Promise.all(calls).then(function (results) {
-      btn.disabled = false;
-      btn.textContent = '送信する';
-      const failed = results.filter(r => !r.success);
-      if (failed.length === 0) {
-        msg.textContent = '送信しました。お疲れ様でした！';
-        msg.className = 'msg show ok';
-      } else {
-        msg.textContent = `一部送信に失敗しました（${failed.length}件）。`;
-        msg.className = 'msg show info';
-      }
-    }).catch(function () {
-      btn.disabled = false;
-      btn.textContent = '送信する';
-      msg.textContent = '通信エラーが発生しました';
-      msg.className = 'msg show info';
+    dates.forEach(d => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="date-cell">${fmtJP(d)}</td>`;
+      STAFF.forEach(name => {
+        const cell = data[d][name];
+        const st   = cell ? cell.workStatus : '';
+        const ck   = cell ? cell.checked    : false;
+        const td   = document.createElement('td');
+        td.className = 'grid-cell';
+        td.dataset.date = d; td.dataset.name = name;
+        td.dataset.checked = ck ? '1' : '0';
+        if (st) {
+          td.innerHTML = `<span class="mk-${st}">${abbr[st]||st}</span>${ck ? '<span class="cell-chk">✓</span>' : ''}`;
+        } else {
+          td.innerHTML = `<span class="mk-未">未</span>${ck ? '<span class="cell-chk">✓</span>' : ''}`;
+        }
+        td.addEventListener('click', onGridCellClick);
+        tr.appendChild(td);
+      });
+      table.appendChild(tr);
     });
+    box.innerHTML = '';
+    box.appendChild(table);
+  });
+}
+
+function onGridCellClick(e) {
+  const td      = e.currentTarget;
+  const date    = td.dataset.date;
+  const name    = td.dataset.name;
+  const nowCk   = td.dataset.checked === '1';
+  const nextCk  = !nowCk;
+  td.dataset.checked = nextCk ? '1' : '0';
+
+  // チェック表示を即時更新（楽観的UI）
+  const existingChk = td.querySelector('.cell-chk');
+  if (nextCk && !existingChk) {
+    const span = document.createElement('span');
+    span.className = 'cell-chk'; span.textContent = '✓';
+    td.appendChild(span);
+  } else if (!nextCk && existingChk) {
+    existingChk.remove();
   }
 
-  function refreshCheck() {
-    const date = document.getElementById('c-date').value;
-    const box = document.getElementById('c-status');
-    box.innerHTML = '<div class="loading">読み込み中...</div>';
-    jsonp({ action: 'getStatusForDate', date: date }).then(function (list) {
-      box.innerHTML = '';
-      list.forEach(item => {
-        const statusLabel = item.workStatus || '未回答';
-        const row = document.createElement('div');
-        row.className = 'status-row';
-        row.innerHTML = `
-          <div class="badge ${statusLabel}">${statusLabel}</div>
-          <div class="status-body">
-            <div class="status-name-row">
-              <div class="status-name">${item.name}</div>
-              <div class="check-btn ${item.checked ? 'checked' : ''}" data-name="${item.name}">${item.checked ? '✓ チェック済み' : '本社チェック'}</div>
-            </div>
-            <div class="status-content ${item.content ? '' : 'empty'}">${item.content ? escapeHtml(item.content) : (item.submitted ? '（業務内容の記入なし）' : 'まだ回答されていません')}</div>
-            ${item.note ? `<div class="status-note">気づき：${escapeHtml(item.note)}</div>` : ''}
-            ${item.comment ? `<div class="comment-box">💬 ${item.commenter ? escapeHtml(item.commenter) + '：' : ''}${escapeHtml(item.comment)}</div>` : ''}
-            <div>
-              <span class="edit-link" data-name="${item.name}">${item.submitted ? 'この日報を編集する' : 'この日報を書く'}</span>
-              <span class="comment-toggle" data-name="${item.name}">${item.comment ? 'コメントを編集する' : 'コメントする'}</span>
-            </div>
-            <div class="comment-form" data-name="${item.name}">
-              <input type="text" class="comment-name" placeholder="あなたの名前（社長・本社スタッフなど）" value="${item.commenter ? escapeHtml(item.commenter) : ''}">
-              <textarea class="comment-text" placeholder="ひとこと感想やねぎらいの言葉を">${item.comment ? escapeHtml(item.comment) : ''}</textarea>
-              <button class="comment-submit" data-name="${item.name}">コメントを送る</button>
-            </div>
-          </div>`;
-        box.appendChild(row);
-      });
+  jsonp({ action:'setChecked', date, name, checked: nextCk ? 'true' : 'false' }).then(() => {
+    // 日次ビューも日付が一致していれば同期
+    const cDate = document.getElementById('c-date').value;
+    if (cDate === date) refreshCheck();
+  });
+}
 
-      box.querySelectorAll('.edit-link').forEach(el => {
-        el.addEventListener('click', () => {
-          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-          document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-          document.querySelector('.tab[data-tab="write"]').classList.add('active');
-          document.getElementById('panel-write').classList.add('active');
-          document.getElementById('w-date').value = date;
-          const nameSel = document.getElementById('w-myname');
-          nameSel.value = el.dataset.name;
-          localStorage.setItem(MYNAME_KEY, el.dataset.name);
-          buildOthersRows();
-          loadWriteData(date);
-        });
-      });
-
-      box.querySelectorAll('.check-btn').forEach(el => {
-        el.addEventListener('click', () => {
-          const nowChecked = !el.classList.contains('checked');
-          el.textContent = '処理中...';
-          jsonp({ action: 'setChecked', date: date, name: el.dataset.name, checked: nowChecked ? 'true' : 'false' }).then(function () {
-            el.classList.toggle('checked', nowChecked);
-            el.textContent = nowChecked ? '✓ チェック済み' : '本社チェック';
-          });
-        });
-      });
-
-      box.querySelectorAll('.comment-toggle').forEach(el => {
-        el.addEventListener('click', () => {
-          const form = box.querySelector(`.comment-form[data-name="${el.dataset.name}"]`);
-          const open = form.style.display === 'block';
-          form.style.display = open ? 'none' : 'block';
-        });
-      });
-
-      box.querySelectorAll('.comment-submit').forEach(el => {
-        el.addEventListener('click', () => {
-          const form = el.closest('.comment-form');
-          const commenter = form.querySelector('.comment-name').value.trim();
-          const comment = form.querySelector('.comment-text').value.trim();
-          el.disabled = true;
-          el.textContent = '送信中...';
-          jsonp({ action: 'addComment', date: date, name: el.dataset.name, comment: comment, commenter: commenter }).then(function (res) {
-            el.disabled = false;
-            el.textContent = 'コメントを送る';
-            if (res.success) {
-              refreshCheck();
-            }
-          });
-        });
-      });
-    });
-  }
-
-  function refreshGrid() {
-    const ym = document.getElementById('c-month').value;
-    const box = document.getElementById('c-grid');
-    box.innerHTML = '<div class="loading">読み込み中...</div>';
-    jsonp({ action: 'getMonthStatus', month: ym }).then(function (data) {
-      const dates = Object.keys(data).sort();
-      if (dates.length === 0) {
-        box.innerHTML = '<div class="loading">この月の回答はまだありません</div>';
-        return;
-      }
-      const abbr = { '本社勤務': '本社', '公休': '公休', '新宿店勤務': '新宿' };
-      let html = '<table class="grid"><tr><th>日付</th>' + STAFF.map(n => `<th>${n}</th>`).join('') + '</tr>';
-      dates.forEach(d => {
-        html += `<tr><td class="date-cell">${fmtJP(d)}</td>`;
-        STAFF.forEach(n => {
-          const st = data[d][n];
-          if (st) {
-            html += `<td><span class="mk-${st}">${abbr[st] || st}</span></td>`;
-          } else {
-            html += `<td><span class="mk-未">未</span></td>`;
-          }
-        });
-        html += '</tr>';
-      });
-      html += '</table>';
-      box.innerHTML = html;
-    });
-  }
-
-  function buildExport() {
-    const date = document.getElementById('e-date').value;
-    const result = document.getElementById('e-result');
-    const preview = document.getElementById('exportPreview');
-    preview.innerHTML = '<div class="loading">読み込み中...</div>';
-    result.style.display = 'block';
-    jsonp({ action: 'getStatusForDate', date: date }).then(function (list) {
-      const colorMap = { '本社勤務': '#e8eef5', '公休': '#efeceb', '新宿店勤務': '#f1ebf5' };
-      const textColorMap = { '本社勤務': '#6b8fb8', '公休': '#8a7d79', '新宿店勤務': '#9b7fb8' };
-      let html = `<h2>業務報告書　${fmtJP(date)}</h2>`;
-      list.forEach(item => {
-        const st = item.workStatus || '未回答';
-        const bg = colorMap[st] || '#fbe9eb';
-        const fg = textColorMap[st] || '#d4707a';
-        html += `<div class="export-block">
-          <span class="export-name">■ ${item.name}</span>
-          <span class="export-status" style="background:${bg};color:${fg};">${st}</span>
-          <div class="export-text ${item.content ? '' : 'empty'}">${item.content ? escapeHtml(item.content) : '（業務内容の記入なし）'}</div>
-          ${item.note ? `<div class="export-note">気づき：${escapeHtml(item.note)}</div>` : ''}
+// ============================================================
+// 確認タブ：コメント（人単位）
+// ============================================================
+function refreshComments() {
+  const box = document.getElementById('c-comments');
+  box.innerHTML = '<div class="loading">読み込み中...</div>';
+  jsonp({ action:'getAllPersonComments' }).then(data => {
+    box.innerHTML = '';
+    STAFF.forEach(name => {
+      const entry = data[name];
+      const div = document.createElement('div');
+      div.className = 'comment-row';
+      div.innerHTML = `
+        <div class="comment-row-name">${name}</div>
+        ${entry && entry.comment
+          ? `<div class="comment-row-text">${escapeHtml(entry.comment)}</div>
+             <div class="comment-row-from">${entry.commenter ? 'from ' + escapeHtml(entry.commenter) : ''}</div>`
+          : `<div class="comment-row-text" style="color:var(--muted);font-style:italic;">コメントなし</div>`}
+        <span class="comment-edit-link" data-name="${name}">${entry && entry.comment ? 'コメントを編集する' : 'コメントする'}</span>
+        <div class="comment-form" data-name="${name}">
+          <input type="text" class="comment-name-in" placeholder="あなたの名前（社長・宮下など）" value="${entry && entry.commenter ? escapeHtml(entry.commenter) : ''}">
+          <textarea class="comment-text-in" placeholder="ひとことメッセージ">${entry && entry.comment ? escapeHtml(entry.comment) : ''}</textarea>
+          <button class="comment-send-btn" data-name="${name}">送信する</button>
         </div>`;
+      box.appendChild(div);
+    });
+
+    box.querySelectorAll('.comment-edit-link').forEach(el => {
+      el.addEventListener('click', () => {
+        const form = box.querySelector(`.comment-form[data-name="${el.dataset.name}"]`);
+        const open = form.style.display === 'block';
+        form.style.display = open ? 'none' : 'block';
       });
-      preview.innerHTML = html;
-      preview.dataset.date = date;
-      preview.dataset.raw = JSON.stringify(list);
     });
-  }
 
-  function downloadText() {
-    const preview = document.getElementById('exportPreview');
-    if (!preview.dataset.raw) return;
-    const list = JSON.parse(preview.dataset.raw);
-    const date = preview.dataset.date;
-    let text = `業務報告書　${fmtJP(date)}\n\n`;
+    box.querySelectorAll('.comment-send-btn').forEach(el => {
+      el.addEventListener('click', () => {
+        const form      = el.closest('.comment-form');
+        const commenter = form.querySelector('.comment-name-in').value.trim();
+        const comment   = form.querySelector('.comment-text-in').value.trim();
+        el.disabled = true; el.textContent = '送信中...';
+        jsonp({ action:'savePersonComment', name:el.dataset.name, comment, commenter }).then(res => {
+          el.disabled = false; el.textContent = '送信する';
+          if (res.success) refreshComments();
+        });
+      });
+    });
+  });
+}
+
+// ============================================================
+// まとめるタブ
+// ============================================================
+function buildExport() {
+  const date    = document.getElementById('e-date').value;
+  const result  = document.getElementById('e-result');
+  const preview = document.getElementById('exportPreview');
+  preview.innerHTML = '<div class="loading">読み込み中...</div>';
+  result.style.display = 'block';
+  jsonp({ action:'getStatusForDate', date }).then(list => {
+    const colorMap = { '本社勤務':'#e8eef5', '公休':'#efeceb', '新宿店勤務':'#f1ebf5' };
+    const textMap  = { '本社勤務':'#6b8fb8', '公休':'#8a7d79',  '新宿店勤務':'#9b7fb8' };
+    let html = `<h2>業務報告書　${fmtJP(date)}</h2>`;
     list.forEach(item => {
-      text += `■ ${item.name}（${item.workStatus || '未回答'}）\n`;
-      text += `${item.content || '（業務内容の記入なし）'}\n`;
-      if (item.note) text += `気づき：${item.note}\n`;
-      text += '\n';
+      const st = item.workStatus || '未回答';
+      const bg = colorMap[st] || '#fbe9eb';
+      const fg = textMap[st]  || '#d4707a';
+      html += `<div class="export-block">
+        <span class="export-name">■ ${item.name}</span>
+        <span class="export-status" style="background:${bg};color:${fg};">${st}</span>
+        ${item.checked ? '<span class="export-status" style="background:#e9f5ec;color:#6aa97a;">✓ チェック済</span>' : ''}
+        <div class="export-text ${item.content?'':'empty'}">${item.content ? escapeHtml(item.content) : '（業務内容の記入なし）'}</div>
+        ${item.note ? `<div class="export-note">気づき：${escapeHtml(item.note)}</div>` : ''}
+      </div>`;
     });
-    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `業務報告書_${date}.txt`;
-    a.click();
-  }
+    preview.innerHTML = html;
+    preview.dataset.date = date;
+    preview.dataset.raw  = JSON.stringify(list);
+  });
+}
 
-  function downloadImage() {
-    const preview = document.getElementById('exportPreview');
-    if (!preview.dataset.raw) return;
-    const btn = document.getElementById('e-download-image');
-    btn.disabled = true;
-    btn.textContent = '画像を作成中...';
-    html2canvas(preview, { scale: 2, backgroundColor: '#ffffff' }).then(function (canvas) {
-      const a = document.createElement('a');
-      a.href = canvas.toDataURL('image/png');
-      a.download = `業務報告書_${preview.dataset.date}.png`;
-      a.click();
-      btn.disabled = false;
-      btn.textContent = '画像として保存';
-    });
-  }
+function downloadText() {
+  const preview = document.getElementById('exportPreview');
+  if (!preview.dataset.raw) return;
+  const list = JSON.parse(preview.dataset.raw);
+  const date = preview.dataset.date;
+  let text = `業務報告書　${fmtJP(date)}\n\n`;
+  list.forEach(item => {
+    text += `■ ${item.name}（${item.workStatus||'未回答'}）${item.checked?' ✓チェック済':''}\n`;
+    text += `${item.content||'（業務内容の記入なし）'}\n`;
+    if (item.note) text += `気づき：${item.note}\n`;
+    text += '\n';
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type:'text/plain;charset=utf-8' }));
+  a.download = `業務報告書_${date}.txt`;
+  a.click();
+}
+
+function downloadImage() {
+  const preview = document.getElementById('exportPreview');
+  if (!preview.dataset.raw) return;
+  const btn = document.getElementById('e-download-image');
+  btn.disabled = true; btn.textContent = '画像を作成中...';
+  html2canvas(preview, { scale:2, backgroundColor:'#ffffff' }).then(canvas => {
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = `業務報告書_${preview.dataset.date}.png`;
+    a.click();
+    btn.disabled = false; btn.textContent = '画像として保存';
+  });
+}
 </script>
 </body>
 </html>
