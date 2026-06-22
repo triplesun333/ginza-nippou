@@ -209,6 +209,52 @@
   .status-name { font-weight: 700; font-size: 14px; margin-bottom: 3px; }
   .status-content { font-size: 13px; color: #6b5e5b; white-space: pre-wrap; line-height: 1.5; }
   .status-note { font-size: 12px; color: #b8794a; margin-top: 4px; white-space: pre-wrap; }
+  .status-name-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .check-btn {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    background: white;
+  }
+  .check-btn.checked { background: var(--green); color: white; border-color: var(--green); }
+  .comment-box {
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: #fdf1e9;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #8a6a4a;
+    white-space: pre-wrap;
+    line-height: 1.5;
+  }
+  .comment-toggle { font-size: 12px; color: var(--pink-dark); text-decoration: underline; cursor: pointer; margin-top: 4px; margin-left: 12px; display: inline-block; }
+  .comment-form { display: none; margin-top: 8px; }
+  .comment-form input {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--border);
+    border-radius: 8px; font-size: 13px; margin-bottom: 6px; font-family: inherit;
+  }
+  .comment-form textarea { min-height: 60px; font-size: 13px; }
+  .comment-form button {
+    margin-top: 8px; padding: 9px; width: 100%; border: none; border-radius: 8px;
+    background: var(--pink-dark); color: white; font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  .my-comment-box {
+    background: #fdf1e9;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    color: #8a6a4a;
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+  .my-comment-box b { color: var(--pink-dark); }
   .status-content.empty { color: var(--muted); font-style: italic; }
   .edit-link { font-size: 12px; color: var(--pink-dark); text-decoration: underline; cursor: pointer; margin-top: 4px; display: inline-block; }
 
@@ -270,6 +316,7 @@
     </div>
 
     <div class="card">
+      <div id="w-comment-box" style="display:none;"></div>
       <label>勤務区分</label>
       <div class="status-btns" id="w-mystatus-btns"></div>
 
@@ -540,6 +587,14 @@
         msg.textContent = 'この日は既に回答済みです。内容を編集して再送信できます。';
         msg.className = 'msg show info';
       }
+      const commentBox = document.getElementById('w-comment-box');
+      if (res.comment) {
+        commentBox.style.display = 'block';
+        commentBox.className = 'my-comment-box';
+        commentBox.innerHTML = `💬 <b>${res.commenter ? escapeHtml(res.commenter) : '本社'}より：</b><br>${escapeHtml(res.comment)}`;
+      } else {
+        commentBox.style.display = 'none';
+      }
     });
 
     jsonp({ action: 'getStatusForDate', date: date }).then(function (list) {
@@ -616,13 +671,26 @@
         row.innerHTML = `
           <div class="badge ${statusLabel}">${statusLabel}</div>
           <div class="status-body">
-            <div class="status-name">${item.name}</div>
+            <div class="status-name-row">
+              <div class="status-name">${item.name}</div>
+              <div class="check-btn ${item.checked ? 'checked' : ''}" data-name="${item.name}">${item.checked ? '✓ チェック済み' : '本社チェック'}</div>
+            </div>
             <div class="status-content ${item.content ? '' : 'empty'}">${item.content ? escapeHtml(item.content) : (item.submitted ? '（業務内容の記入なし）' : 'まだ回答されていません')}</div>
             ${item.note ? `<div class="status-note">気づき：${escapeHtml(item.note)}</div>` : ''}
-            <span class="edit-link" data-name="${item.name}">${item.submitted ? 'この日報を編集する' : 'この日報を書く'}</span>
+            ${item.comment ? `<div class="comment-box">💬 ${item.commenter ? escapeHtml(item.commenter) + '：' : ''}${escapeHtml(item.comment)}</div>` : ''}
+            <div>
+              <span class="edit-link" data-name="${item.name}">${item.submitted ? 'この日報を編集する' : 'この日報を書く'}</span>
+              <span class="comment-toggle" data-name="${item.name}">${item.comment ? 'コメントを編集する' : 'コメントする'}</span>
+            </div>
+            <div class="comment-form" data-name="${item.name}">
+              <input type="text" class="comment-name" placeholder="あなたの名前（社長・本社スタッフなど）" value="${item.commenter ? escapeHtml(item.commenter) : ''}">
+              <textarea class="comment-text" placeholder="ひとこと感想やねぎらいの言葉を">${item.comment ? escapeHtml(item.comment) : ''}</textarea>
+              <button class="comment-submit" data-name="${item.name}">コメントを送る</button>
+            </div>
           </div>`;
         box.appendChild(row);
       });
+
       box.querySelectorAll('.edit-link').forEach(el => {
         el.addEventListener('click', () => {
           document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -635,6 +703,42 @@
           localStorage.setItem(MYNAME_KEY, el.dataset.name);
           buildOthersRows();
           loadWriteData(date);
+        });
+      });
+
+      box.querySelectorAll('.check-btn').forEach(el => {
+        el.addEventListener('click', () => {
+          const nowChecked = !el.classList.contains('checked');
+          el.textContent = '処理中...';
+          jsonp({ action: 'setChecked', date: date, name: el.dataset.name, checked: nowChecked ? 'true' : 'false' }).then(function () {
+            el.classList.toggle('checked', nowChecked);
+            el.textContent = nowChecked ? '✓ チェック済み' : '本社チェック';
+          });
+        });
+      });
+
+      box.querySelectorAll('.comment-toggle').forEach(el => {
+        el.addEventListener('click', () => {
+          const form = box.querySelector(`.comment-form[data-name="${el.dataset.name}"]`);
+          const open = form.style.display === 'block';
+          form.style.display = open ? 'none' : 'block';
+        });
+      });
+
+      box.querySelectorAll('.comment-submit').forEach(el => {
+        el.addEventListener('click', () => {
+          const form = el.closest('.comment-form');
+          const commenter = form.querySelector('.comment-name').value.trim();
+          const comment = form.querySelector('.comment-text').value.trim();
+          el.disabled = true;
+          el.textContent = '送信中...';
+          jsonp({ action: 'addComment', date: date, name: el.dataset.name, comment: comment, commenter: commenter }).then(function (res) {
+            el.disabled = false;
+            el.textContent = 'コメントを送る';
+            if (res.success) {
+              refreshCheck();
+            }
+          });
         });
       });
     });
