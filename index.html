@@ -620,12 +620,20 @@ function initApp() {
     STAFF = res.staff;
     WORK_STATUS_LIST = res.workStatusList;
     const sel = document.getElementById('w-myname');
+    // 空の初期選択肢（誰も選ばれていない状態）
+    const emptyOpt = document.createElement('option');
+    emptyOpt.value = ''; emptyOpt.textContent = '選択してください';
+    sel.appendChild(emptyOpt);
+
     STAFF.forEach(n => { const o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o); });
     const saved = localStorage.getItem(MYNAME_KEY);
     if (saved && STAFF.includes(saved)) sel.value = saved;
     buildMyStatusButtons();
     buildOthersRows();
-    loadWriteData(document.getElementById('w-date').value);
+    // 名前が選ばれているときだけデータを読み込む
+    if (document.getElementById('w-myname').value) {
+      loadWriteData(document.getElementById('w-date').value);
+    }
     refreshCheck();
     refreshGrid();
   });
@@ -645,9 +653,15 @@ function initApp() {
   });
   document.getElementById('w-date').addEventListener('change', ()=>loadWriteData(document.getElementById('w-date').value));
   document.getElementById('w-myname').addEventListener('change', ()=>{
-    localStorage.setItem(MYNAME_KEY, document.getElementById('w-myname').value);
+    const name = document.getElementById('w-myname').value;
+    if (name) localStorage.setItem(MYNAME_KEY, name);
     buildOthersRows();
-    loadWriteData(document.getElementById('w-date').value);
+    if (name) loadWriteData(document.getElementById('w-date').value);
+    else {
+      // 未選択に戻したらバナーとメッセージをクリア
+      document.getElementById('w-comment-banner').style.display = 'none';
+      document.getElementById('w-msg').className = 'msg';
+    }
   });
   document.getElementById('w-expander-head').addEventListener('click', function(){
     const box=document.getElementById('w-others'), open=box.style.display==='block';
@@ -711,8 +725,10 @@ function loadWriteData(date) {
 }
 function submitWrite() {
   const date=document.getElementById('w-date').value, myname=document.getElementById('w-myname').value;
+  const msg=document.getElementById('w-msg');
+  if (!myname) { msg.textContent='名前を選択してください。'; msg.className='msg show info'; return; }
   const content=document.getElementById('w-content').value.trim(), note=document.getElementById('w-note').value.trim();
-  const mySel=document.querySelector('#w-mystatus-btns .status-btn.selected'), msg=document.getElementById('w-msg');
+  const mySel=document.querySelector('#w-mystatus-btns .status-btn.selected');
   if (!mySel) { msg.textContent='勤務区分を選択してください。'; msg.className='msg show info'; return; }
   const others=Array.from(document.querySelectorAll('.other-row')).map(r=>{ const s=r.querySelector('.other-btn.selected'); return s?{name:r.dataset.name,workStatus:s.dataset.value}:null; }).filter(Boolean);
   const btn=document.getElementById('w-submit'); btn.disabled=true; btn.textContent='送信中…';
