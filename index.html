@@ -626,7 +626,9 @@ function initApp() {
     sel.appendChild(emptyOpt);
 
     STAFF.forEach(n => { const o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o); });
-    const saved = localStorage.getItem(MYNAME_KEY);
+    let saved = localStorage.getItem(MYNAME_KEY);
+    // 旧名前が残っていた場合は新名前に自動移行
+    if (saved === '加藤愛美') { saved = '加藤愛実'; localStorage.setItem(MYNAME_KEY, saved); }
     if (saved && STAFF.includes(saved)) sel.value = saved;
     buildMyStatusButtons();
     buildOthersRows();
