@@ -512,16 +512,16 @@
       <label>気づいたこと（任意）</label>
       <textarea id="w-note" placeholder="備品不足・要確認事項など" style="min-height:70px;"></textarea>
 
-      <label>電話対応件数（任意）</label>
+      <label>電話対応件数</label>
       <div class="phone-row">
         <div class="phone-field">
           <span class="phone-field-label">取次</span>
-          <input type="number" id="w-phone-transfer" inputmode="numeric" min="0" placeholder="0">
+          <input type="number" id="w-phone-transfer" inputmode="numeric" min="0" placeholder="0" required>
           <span class="phone-field-unit">件</span>
         </div>
         <div class="phone-field">
           <span class="phone-field-label">受注</span>
-          <input type="number" id="w-phone-order" inputmode="numeric" min="0" placeholder="0">
+          <input type="number" id="w-phone-order" inputmode="numeric" min="0" placeholder="0" required>
           <span class="phone-field-unit">件</span>
         </div>
       </div>
@@ -795,6 +795,7 @@ function submitWrite() {
   const phoneOrder=document.getElementById('w-phone-order').value.trim();
   const mySel=document.querySelector('#w-mystatus-btns .status-btn.selected');
   if (!mySel) { msg.textContent='勤務区分を選択してください。'; msg.className='msg show info'; return; }
+  if (phoneTransfer==='' || phoneOrder==='') { msg.textContent='電話対応件数（取次・受注）を入力してください。0件の場合は0と入力してください。'; msg.className='msg show info'; return; }
   const others=Array.from(document.querySelectorAll('.other-row')).map(r=>{ const s=r.querySelector('.other-btn.selected'); return s?{name:r.dataset.name,workStatus:s.dataset.value}:null; }).filter(Boolean);
   const btn=document.getElementById('w-submit'); btn.disabled=true; btn.textContent='送信中…';
   Promise.all([jsonp({action:'submitReport',date,name:myname,workStatus:mySel.dataset.value,content,note,phoneTransfer,phoneOrder}),...others.map(o=>jsonp({action:'updateWorkStatusOnly',date,name:o.name,workStatus:o.workStatus}))]).then(results=>{
