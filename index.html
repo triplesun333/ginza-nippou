@@ -251,6 +251,38 @@
   .msg.ok   { background: #edf5ef; color: var(--green); }
   .msg.info { background: var(--gold-pale); color: #8a6a2a; border: 1px solid var(--gold-light); }
 
+  /* ===== 前日未入力アラート ===== */
+  .yesterday-alert {
+    background: #fdf0ef;
+    border: 1px solid #e8b8b4;
+    border-left: 3px solid var(--red);
+    border-radius: 3px;
+    padding: 13px 16px;
+    margin-bottom: 16px;
+    font-size: 12.5px;
+    color: #9a4a44;
+    line-height: 1.6;
+  }
+  .yesterday-alert b { color: var(--red); }
+
+  /* ===== 電話対応件数 ===== */
+  .phone-row { display: flex; gap: 10px; margin-top: 7px; }
+  .phone-field {
+    flex: 1; display: flex; align-items: center; gap: 6px;
+    border: 1px solid var(--border); border-radius: 3px;
+    padding: 8px 10px; background: #fdfcfb;
+  }
+  .phone-field-label {
+    font-size: 12px; color: var(--navy); font-weight: 500;
+    flex-shrink: 0; white-space: nowrap;
+  }
+  .phone-field input[type="number"] {
+    border: none; padding: 0; text-align: right;
+    font-size: 15px; width: 100%; background: transparent;
+  }
+  .phone-field input[type="number"]:focus { border: none; }
+  .phone-field-unit { font-size: 11px; color: var(--muted); flex-shrink: 0; }
+
   /* ===== 本社コメントバナー ===== */
   .my-comment-banner {
     background: var(--gold-pale);
@@ -470,6 +502,7 @@
     </div>
 
     <div id="w-comment-banner" style="display:none;"></div>
+    <div id="w-yesterday-warning" style="display:none;"></div>
 
     <div class="card">
       <label>勤務区分</label>
@@ -478,6 +511,21 @@
       <textarea id="w-content" placeholder="本日の業務内容をご記入ください"></textarea>
       <label>気づいたこと（任意）</label>
       <textarea id="w-note" placeholder="備品不足・要確認事項など" style="min-height:70px;"></textarea>
+
+      <label>電話対応件数（任意）</label>
+      <div class="phone-row">
+        <div class="phone-field">
+          <span class="phone-field-label">取次</span>
+          <input type="number" id="w-phone-transfer" inputmode="numeric" min="0" placeholder="0">
+          <span class="phone-field-unit">件</span>
+        </div>
+        <div class="phone-field">
+          <span class="phone-field-label">受注</span>
+          <input type="number" id="w-phone-order" inputmode="numeric" min="0" placeholder="0">
+          <span class="phone-field-unit">件</span>
+        </div>
+      </div>
+
       <button class="main-btn" id="w-submit">送　信</button>
       <div class="msg" id="w-msg"></div>
     </div>
@@ -662,6 +710,7 @@ function initApp() {
     else {
       // 未選択に戻したらバナーとメッセージをクリア
       document.getElementById('w-comment-banner').style.display = 'none';
+      document.getElementById('w-yesterday-warning').style.display = 'none';
       document.getElementById('w-msg').className = 'msg';
     }
   });
@@ -706,6 +755,8 @@ function loadWriteData(date) {
   jsonp({ action:'getReportForDate', date, name:myname }).then(res => {
     document.getElementById('w-content').value = res.content||'';
     document.getElementById('w-note').value    = res.note||'';
+    document.getElementById('w-phone-transfer').value = res.phoneTransfer || '';
+    document.getElementById('w-phone-order').value    = res.phoneOrder    || '';
     document.querySelectorAll('#w-mystatus-btns .status-btn').forEach(b=>b.classList.toggle('selected',b.dataset.value===res.workStatus));
     if (res.workStatus) { msg.textContent='この日は既に回答済みです。内容を編集して再送信できます。'; msg.className='msg show info'; }
   });
@@ -724,17 +775,29 @@ function loadWriteData(date) {
   jsonp({ action:'getStatusForDate', date }).then(list=>{
     list.forEach(item=>{ if(item.name===myname) return; const row=document.querySelector(`.other-row[data-name="${item.name}"]`); if(!row) return; row.querySelectorAll('.other-btn').forEach(b=>b.classList.toggle('selected',b.dataset.value===item.workStatus)); });
   });
+  // 前日分が未入力のスタッフがいないか確認
+  jsonp({ action:'getYesterdayMissing', date }).then(res => {
+    const box = document.getElementById('w-yesterday-warning');
+    if (res.missing && res.missing.length > 0) {
+      box.style.display = 'block';
+      box.innerHTML = `<div class="yesterday-alert">⚠ <b>${fmtJP(res.yesterdayDate)}</b>分が未入力です！　対象：${res.missing.map(esc).join('、')}</div>`;
+    } else {
+      box.style.display = 'none';
+    }
+  });
 }
 function submitWrite() {
   const date=document.getElementById('w-date').value, myname=document.getElementById('w-myname').value;
   const msg=document.getElementById('w-msg');
   if (!myname) { msg.textContent='名前を選択してください。'; msg.className='msg show info'; return; }
   const content=document.getElementById('w-content').value.trim(), note=document.getElementById('w-note').value.trim();
+  const phoneTransfer=document.getElementById('w-phone-transfer').value.trim();
+  const phoneOrder=document.getElementById('w-phone-order').value.trim();
   const mySel=document.querySelector('#w-mystatus-btns .status-btn.selected');
   if (!mySel) { msg.textContent='勤務区分を選択してください。'; msg.className='msg show info'; return; }
   const others=Array.from(document.querySelectorAll('.other-row')).map(r=>{ const s=r.querySelector('.other-btn.selected'); return s?{name:r.dataset.name,workStatus:s.dataset.value}:null; }).filter(Boolean);
   const btn=document.getElementById('w-submit'); btn.disabled=true; btn.textContent='送信中…';
-  Promise.all([jsonp({action:'submitReport',date,name:myname,workStatus:mySel.dataset.value,content,note}),...others.map(o=>jsonp({action:'updateWorkStatusOnly',date,name:o.name,workStatus:o.workStatus}))]).then(results=>{
+  Promise.all([jsonp({action:'submitReport',date,name:myname,workStatus:mySel.dataset.value,content,note,phoneTransfer,phoneOrder}),...others.map(o=>jsonp({action:'updateWorkStatusOnly',date,name:o.name,workStatus:o.workStatus}))]).then(results=>{
     btn.disabled=false; btn.textContent='送　信';
     const failed=results.filter(r=>!r.success);
     msg.textContent=failed.length===0?'送信しました。お疲れ様でした。':`一部失敗しました（${failed.length}件）`;
@@ -752,7 +815,7 @@ function refreshCheck() {
     box.innerHTML='';
     list.forEach(item=>{
       const sl=item.workStatus||'未回答', row=document.createElement('div'); row.className='status-row';
-      row.innerHTML=`<div class="badge ${sl}">${sl}</div><div class="status-body"><div class="status-name-row"><div class="status-name">${item.name}</div><div class="check-inline ${item.checked?'checked':''}" data-name="${item.name}">${item.checked?'✓ 確認済':'確　認'}</div></div><div class="status-content ${item.content?'':'empty'}">${item.content?esc(item.content):(item.submitted?'（記入なし）':'未回答')}</div>${item.note?`<div class="status-note">◎ ${esc(item.note)}</div>`:''}<span class="edit-link" data-name="${item.name}">${item.submitted?'編集する':'書く'}</span></div>`;
+      row.innerHTML=`<div class="badge ${sl}">${sl}</div><div class="status-body"><div class="status-name-row"><div class="status-name">${item.name}</div><div class="check-inline ${item.checked?'checked':''}" data-name="${item.name}">${item.checked?'✓ 確認済':'確　認'}</div></div><div class="status-content ${item.content?'':'empty'}">${item.content?esc(item.content):(item.submitted?'（記入なし）':'未回答')}</div>${item.note?`<div class="status-note">◎ ${esc(item.note)}</div>`:''}${(item.phoneTransfer||item.phoneOrder)?`<div class="status-note">☎ 取次 ${esc(item.phoneTransfer||'0')}件／受注 ${esc(item.phoneOrder||'0')}件</div>`:''}<span class="edit-link" data-name="${item.name}">${item.submitted?'編集する':'書く'}</span></div>`;
       box.appendChild(row);
     });
     box.querySelectorAll('.edit-link').forEach(el=>el.addEventListener('click',()=>jumpToWrite(date,el.dataset.name)));
@@ -875,7 +938,7 @@ function buildExport() {
     let html=`<h2>業務報告書　${fmtJP(date)}</h2>`;
     list.forEach(item=>{
       const st=item.workStatus||'未回答', bg=cMap[st]||'rgba(192,96,106,.08)', fg=fMap[st]||'#c0606a';
-      html+=`<div class="export-block"><span class="export-name">■ ${item.name}</span><span class="export-status" style="background:${bg};color:${fg};">${st}</span>${item.checked?'<span class="export-status" style="background:#edf5ef;color:#5a9a6a;">✓ 確認済</span>':''}<div class="export-text ${item.content?'':'empty'}">${item.content?esc(item.content):'（記入なし）'}</div>${item.note?`<div class="export-note">◎ ${esc(item.note)}</div>`:''}</div>`;
+      html+=`<div class="export-block"><span class="export-name">■ ${item.name}</span><span class="export-status" style="background:${bg};color:${fg};">${st}</span>${item.checked?'<span class="export-status" style="background:#edf5ef;color:#5a9a6a;">✓ 確認済</span>':''}<div class="export-text ${item.content?'':'empty'}">${item.content?esc(item.content):'（記入なし）'}</div>${item.note?`<div class="export-note">◎ ${esc(item.note)}</div>`:''}${(item.phoneTransfer||item.phoneOrder)?`<div class="export-note">☎ 取次 ${esc(item.phoneTransfer||'0')}件／受注 ${esc(item.phoneOrder||'0')}件</div>`:''}</div>`;
     });
     preview.innerHTML=html; preview.dataset.date=date; preview.dataset.raw=JSON.stringify(list);
   });
@@ -884,7 +947,7 @@ function downloadText() {
   const preview=document.getElementById('exportPreview'); if(!preview.dataset.raw) return;
   const list=JSON.parse(preview.dataset.raw), date=preview.dataset.date;
   let text=`業務報告書　${fmtJP(date)}\n\n`;
-  list.forEach(item=>{ text+=`■ ${item.name}（${item.workStatus||'未回答'}）${item.checked?' ✓確認済':''}\n${item.content||'（記入なし）'}\n${item.note?'◎ '+item.note+'\n':''}\n`; });
+  list.forEach(item=>{ text+=`■ ${item.name}（${item.workStatus||'未回答'}）${item.checked?' ✓確認済':''}\n${item.content||'（記入なし）'}\n${item.note?'◎ '+item.note+'\n':''}${(item.phoneTransfer||item.phoneOrder)?'☎ 取次 '+(item.phoneTransfer||'0')+'件／受注 '+(item.phoneOrder||'0')+'件\n':''}\n`; });
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'})); a.download=`業務報告書_${date}.txt`; a.click();
 }
 function downloadImage() {
