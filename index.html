@@ -251,6 +251,26 @@
   .msg.ok   { background: #edf5ef; color: var(--green); }
   .msg.info { background: var(--gold-pale); color: #8a6a2a; border: 1px solid var(--gold-light); }
 
+  .date-with-btn {
+    display: flex; gap: 8px; align-items: center;
+  }
+  .date-with-btn input[type="date"] { flex: 1; }
+  .prev-day-btn {
+    flex-shrink: 0;
+    padding: 10px 12px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--navy);
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: var(--sans);
+    transition: all .15s;
+  }
+  .prev-day-btn:hover { background: var(--navy); color: white; border-color: var(--navy); }
+
   /* ===== 前日未入力アラート ===== */
   .yesterday-alert {
     background: #fdf0ef;
@@ -541,7 +561,10 @@
     <div class="card">
       <div class="card-title">日別の確認</div>
       <label>日付</label>
-      <input type="date" id="c-date">
+      <div class="date-with-btn">
+        <input type="date" id="c-date">
+        <button class="prev-day-btn" id="c-prev-day">◀ 前日</button>
+      </div>
       <div id="c-status" style="margin-top:16px;"></div>
     </div>
 
@@ -562,7 +585,10 @@
     <div class="card">
       <div class="card-title">日報をまとめる</div>
       <label>日付</label>
-      <input type="date" id="e-date">
+      <div class="date-with-btn">
+        <input type="date" id="e-date">
+        <button class="prev-day-btn" id="e-prev-day">◀ 前日</button>
+      </div>
       <button class="main-btn secondary" id="e-build">この日の日報を表示</button>
     </div>
     <div class="card" id="e-result" style="display:none;">
@@ -625,6 +651,7 @@ function jsonp(params) {
 // ユーティリティ
 // ============================================================
 const todayStr = () => { const d=new Date(),p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; };
+const fmtDate  = d => { const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; };
 const thisMonthStr = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; };
 const youbi = ['日','月','火','水','木','金','土'];
 const fmtJP = s => { const d=new Date(s+'T00:00:00'); return `${d.getMonth()+1}/${d.getDate()}(${youbi[d.getDay()]})`; };
@@ -727,6 +754,26 @@ function initApp() {
   document.getElementById('e-download-image').addEventListener('click', downloadImage);
   document.getElementById('modal-cancel').addEventListener('click', closeModal);
   document.getElementById('commentModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeModal(); });
+
+  // 前日ボタン（確認タブ）
+  document.getElementById('c-prev-day').addEventListener('click', () => {
+    const cur = document.getElementById('c-date').value;
+    if (!cur) return;
+    const d = new Date(cur + 'T00:00:00');
+    d.setDate(d.getDate() - 1);
+    const prev = fmtDate(d);
+    document.getElementById('c-date').value = prev;
+    refreshCheck();
+  });
+
+  // 前日ボタン（まとめるタブ）
+  document.getElementById('e-prev-day').addEventListener('click', () => {
+    const cur = document.getElementById('e-date').value;
+    if (!cur) return;
+    const d = new Date(cur + 'T00:00:00');
+    d.setDate(d.getDate() - 1);
+    document.getElementById('e-date').value = fmtDate(d);
+  });
 }
 
 // ============================================================
