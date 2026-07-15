@@ -628,9 +628,7 @@ let STAFF = [];
 let WORK_STATUS_LIST = ['本社勤務', '公休', '新宿店勤務'];
 let personComments = {};  // 全員の最新コメントキャッシュ
 
-// ============================================================
-// JSONP
-// ============================================================
+// JSONP：読み込み系（URLパラメータで送る）
 let jsonpCounter = 0;
 function jsonp(params) {
   return new Promise((resolve, reject) => {
@@ -644,6 +642,20 @@ function jsonp(params) {
     window[cb] = d => { resolve(d); delete window[cb]; s.remove(); };
     s.onerror = () => { reject(new Error('通信エラー')); delete window[cb]; s.remove(); };
     document.body.appendChild(s);
+  });
+}
+
+// POST：書き込み系（長文テキストもURL制限なしで送れる）
+function postData(params) {
+  const pw = sessionStorage.getItem(STORAGE_KEY);
+  if (pw) params.pw = pw;
+  return fetch(GAS_URL, {
+    method: 'POST',
+    body: JSON.stringify(params),
+    redirect: 'follow'
+  }).then(r => r.json()).catch(() => {
+    // フォールバック：POSTが失敗した場合はJSONPで再試行（短いパラメータの場合）
+    return jsonp(params);
   });
 }
 
@@ -845,7 +857,7 @@ function submitWrite() {
   if (phoneTransfer==='' || phoneOrder==='') { msg.textContent='電話対応件数（取次・受注）を入力してください。0件の場合は0と入力してください。'; msg.className='msg show info'; return; }
   const others=Array.from(document.querySelectorAll('.other-row')).map(r=>{ const s=r.querySelector('.other-btn.selected'); return s?{name:r.dataset.name,workStatus:s.dataset.value}:null; }).filter(Boolean);
   const btn=document.getElementById('w-submit'); btn.disabled=true; btn.textContent='送信中…';
-  Promise.all([jsonp({action:'submitReport',date,name:myname,workStatus:mySel.dataset.value,content,note,phoneTransfer,phoneOrder}),...others.map(o=>jsonp({action:'updateWorkStatusOnly',date,name:o.name,workStatus:o.workStatus}))]).then(results=>{
+  Promise.all([postData({action:'submitReport',date,name:myname,workStatus:mySel.dataset.value,content,note,phoneTransfer,phoneOrder}),...others.map(o=>postData({action:'updateWorkStatusOnly',date,name:o.name,workStatus:o.workStatus}))]).then(results=>{
     btn.disabled=false; btn.textContent='送　信';
     const failed=results.filter(r=>!r.success);
     msg.textContent=failed.length===0?'送信しました。お疲れ様でした。':`一部失敗しました（${failed.length}件）`;
@@ -869,7 +881,7 @@ function refreshCheck() {
     box.querySelectorAll('.edit-link').forEach(el=>el.addEventListener('click',()=>jumpToWrite(date,el.dataset.name)));
     box.querySelectorAll('.check-inline').forEach(el=>el.addEventListener('click',()=>{
       const nc=!el.classList.contains('checked'); el.textContent='…';
-      jsonp({action:'setChecked',date,name:el.dataset.name,checked:nc?'true':'false'}).then(()=>{ el.classList.toggle('checked',nc); el.textContent=nc?'✓ 確認済':'確　認'; refreshGrid(); });
+      postData({action:'setChecked',date,name:el.dataset.name,checked:nc?'true':'false'}).then(()=>{ el.classList.toggle('checked',nc); el.textContent=nc?'✓ 確認済':'確　認'; refreshGrid(); });
     }));
   });
 }
@@ -936,7 +948,7 @@ function onGridCellClick(e) {
   const existingChk=td.querySelector('.cell-chk');
   if (nextCk&&!existingChk) { const s=document.createElement('span'); s.className='cell-chk'; s.textContent='✓'; td.appendChild(s); }
   else if (!nextCk&&existingChk) existingChk.remove();
-  jsonp({action:'setChecked',date,name,checked:nextCk?'true':'false'}).then(()=>{ if(document.getElementById('c-date').value===date) refreshCheck(); });
+  postData({action:'setChecked',date,name,checked:nextCk?'true':'false'}).then(()=>{ if(document.getElementById('c-date').value===date) refreshCheck(); });
 }
 
 // ============================================================
@@ -968,7 +980,7 @@ function sendComment() {
   const btn       = document.getElementById('modal-send');
   if (!comment) { document.getElementById('modal-text').focus(); return; }
   btn.disabled = true; btn.textContent = '送信中…';
-  jsonp({ action:'savePersonComment', name:modalTargetName, comment, commenter }).then(res => {
+  postData({ action:'savePersonComment', name:modalTargetName, comment, commenter }).then(res => {
     btn.disabled = false; btn.textContent = '送　信';
     if (res.success) { closeModal(); refreshGrid(); }
   }).catch(()=>{ btn.disabled=false; btn.textContent='送　信'; });
