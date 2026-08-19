@@ -1017,7 +1017,16 @@ function buildExport() {
     let html=`<h2>業務報告書　${fmtJP(date)}</h2>`;
     list.forEach(item=>{
       const st=item.workStatus||'未回答', bg=cMap[st]||'rgba(192,96,106,.08)', fg=fMap[st]||'#c0606a';
-      html+=`<div class="export-block"><span class="export-name">■ ${item.name}</span><span class="export-status" style="background:${bg};color:${fg};">${st}</span>${item.checked?'<span class="export-status" style="background:#edf5ef;color:#5a9a6a;">✓ 社長報告済</span>':''}<div class="export-text ${item.content?'':'empty'}">${item.content?esc(item.content):'（記入なし）'}</div>${item.note?`<div class="export-note">◎ ${esc(item.note)}</div>`:''}${(item.phoneTransfer||item.phoneOrder)?`<div class="export-note">☎ 取次 ${esc(item.phoneTransfer||'0')}件／受注 ${esc(item.phoneOrder||'0')}件</div>`:''}</div>`;
+      const checkedBadge = item.checked ? '<span class="export-status" style="background:#edf5ef;color:#5a9a6a;">✓ 社長報告済</span>' : '';
+      const exportNote = item.note ? '<div class="export-note">◎ '+esc(item.note)+'</div>' : '';
+      const exportPhone = (item.phoneTransfer||item.phoneOrder) ? '<div class="export-note">☎ 取次 '+esc(item.phoneTransfer||'0')+'件／受注 '+esc(item.phoneOrder||'0')+'件</div>' : '';
+      html += '<div class="export-block">'
+        +'<span class="export-name">■ '+item.name+'</span>'
+        +'<span class="export-status" style="background:'+bg+';color:'+fg+';">'+st+'</span>'
+        +checkedBadge
+        +'<div class="export-text '+(item.content?'':'empty')+'">'+(item.content?esc(item.content):'（記入なし）')+'</div>'
+        +exportNote+exportPhone
+        +'</div>';
     });
     preview.innerHTML=html; preview.dataset.date=date; preview.dataset.raw=JSON.stringify(list);
   });
