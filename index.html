@@ -303,19 +303,6 @@
   .phone-field input[type="number"]:focus { border: none; }
   .phone-field-unit { font-size: 11px; color: var(--muted); flex-shrink: 0; }
 
-  /* ===== 本社コメントバナー ===== */
-  .my-comment-banner {
-    background: var(--gold-pale);
-    border: 1px solid var(--gold-light);
-    border-left: 3px solid var(--gold);
-    border-radius: 3px;
-    padding: 13px 16px;
-    margin-bottom: 16px;
-    cursor: pointer;
-  }
-  .banner-head { font-size: 12px; font-weight: 500; color: #8a6a2a; letter-spacing: .5px; }
-  .banner-body { font-size: 13px; color: #6a4a1a; margin-top: 8px; white-space: pre-wrap; line-height: 1.6; display: none; }
-
   /* ===== 他メンバー折りたたみ ===== */
   .expander-head {
     font-size: 12px; font-weight: 500; color: var(--gold);
@@ -387,15 +374,6 @@
     display: flex; flex-direction: column; align-items: center;
     justify-content: center; gap: 3px; padding: 6px 2px;
   }
-  .th-comment-btn {
-    font-size: 9px; padding: 2px 5px;
-    background: rgba(201,164,90,.25); color: var(--gold-light);
-    border: 1px solid rgba(201,164,90,.4); border-radius: 2px;
-    cursor: pointer; white-space: nowrap; transition: all .15s;
-    font-family: var(--sans);
-  }
-  .th-comment-btn:hover { background: var(--gold); color: var(--navy-dark); }
-  .th-comment-btn.has-comment { background: var(--gold); color: var(--navy-dark); border-color: var(--gold); }
   table.grid td.date-cell {
     text-align: left; font-weight: 400; white-space: nowrap; padding-left: 8px;
     color: var(--navy); font-size: 11px;
@@ -407,63 +385,6 @@
   .mk-新宿店勤務 { color: #5a6fa0;      font-weight: 500; }
   .mk-未          { color: #ccc;         font-weight: 300; }
   .cell-chk { font-size: 8px; color: var(--green); font-weight: 700; display: block; }
-
-  /* ===== コメントモーダル ===== */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(20,29,58,.5); z-index: 100;
-    align-items: center; justify-content: center;
-    padding: 20px;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal-box {
-    background: white; border-radius: 4px;
-    padding: 24px; max-width: 380px; width: 100%;
-    box-shadow: 0 8px 40px rgba(20,29,58,.2);
-  }
-  .modal-title {
-    font-family: var(--serif);
-    font-size: 16px; font-weight: 500;
-    color: var(--navy); margin: 0 0 4px;
-    letter-spacing: 1px;
-  }
-  .modal-sub { font-size: 11px; color: var(--muted); margin-bottom: 16px; }
-  .modal-current {
-    background: var(--gold-pale); border: 1px solid var(--gold-light);
-    border-radius: 3px; padding: 10px 12px;
-    font-size: 13px; color: #6a4a1a; margin-bottom: 14px;
-    white-space: pre-wrap; line-height: 1.5;
-  }
-  .modal-input {
-    width: 100%; padding: 10px 12px;
-    border: 1px solid var(--border); border-radius: 3px;
-    font-size: 13px; font-family: var(--sans); font-weight: 300;
-    margin-bottom: 8px; outline: none; transition: border-color .2s;
-  }
-  .modal-input:focus { border-color: var(--gold); }
-  .modal-textarea {
-    width: 100%; min-height: 80px; resize: vertical;
-    padding: 10px 12px; border: 1px solid var(--border);
-    border-radius: 3px; font-size: 13px;
-    font-family: var(--sans); font-weight: 300; line-height: 1.6;
-    outline: none; transition: border-color .2s;
-  }
-  .modal-textarea:focus { border-color: var(--gold); }
-  .modal-btns { display: flex; gap: 8px; margin-top: 14px; }
-  .modal-send {
-    flex: 1; padding: 11px;
-    background: var(--navy); color: white;
-    border: none; border-radius: 3px;
-    font-size: 13px; font-weight: 500; letter-spacing: 1px;
-    font-family: var(--sans); cursor: pointer; transition: background .2s;
-  }
-  .modal-send:hover { background: var(--navy-light); }
-  .modal-cancel {
-    padding: 11px 18px;
-    background: white; color: var(--muted);
-    border: 1px solid var(--border); border-radius: 3px;
-    font-size: 13px; font-family: var(--sans); cursor: pointer;
-  }
 
   /* ===== まとめるタブ ===== */
   #exportPreview { background: white; padding: 20px 18px; border-radius: 4px; }
@@ -521,7 +442,6 @@
       <select id="w-myname"></select>
     </div>
 
-    <div id="w-comment-banner" style="display:none;"></div>
     <div id="w-yesterday-warning" style="display:none;"></div>
 
     <div class="card">
@@ -570,7 +490,7 @@
 
     <div class="card">
       <div class="card-title">月次勤務一覧</div>
-      <div class="hint">セルをタップでチェック切り替え　名前の横の 💬 でコメント入力</div>
+      <div class="hint">セルをタップで社長報告済みのオン/オフができます</div>
       <input type="month" id="c-month" style="margin-top:10px;">
       <div class="hint" style="margin-top:6px;">
         <span class="mk-本社勤務">本社</span>／<span class="mk-新宿店勤務">新宿</span>／<span class="mk-公休">公休</span>／<span class="mk-未">未</span>＝未回答　
@@ -601,20 +521,6 @@
   </div>
 </div>
 
-<!-- ===== コメントモーダル ===== -->
-<div class="modal-overlay" id="commentModal">
-  <div class="modal-box">
-    <div class="modal-title" id="modal-title">コメントする</div>
-    <div class="modal-sub" id="modal-sub"></div>
-    <div id="modal-current" style="display:none;" class="modal-current"></div>
-    <input type="text" class="modal-input" id="modal-commenter" placeholder="あなたの名前（社長・宮下など）">
-    <textarea class="modal-textarea" id="modal-text" placeholder="メッセージを入力"></textarea>
-    <div class="modal-btns">
-      <button class="modal-cancel" id="modal-cancel">キャンセル</button>
-      <button class="modal-send" id="modal-send">送　信</button>
-    </div>
-  </div>
-</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
@@ -626,7 +532,6 @@ const STORAGE_KEY = 'ginza_nippou_pw';
 const MYNAME_KEY  = 'ginza_nippou_myname';
 let STAFF = [];
 let WORK_STATUS_LIST = ['本社勤務', '公休', '新宿店勤務'];
-let personComments = {};  // 全員の最新コメントキャッシュ
 
 // JSONP：読み込み系（URLパラメータで送る）
 let jsonpCounter = 0;
@@ -748,7 +653,6 @@ function initApp() {
     if (name) loadWriteData(document.getElementById('w-date').value);
     else {
       // 未選択に戻したらバナーとメッセージをクリア
-      document.getElementById('w-comment-banner').style.display = 'none';
       document.getElementById('w-yesterday-warning').style.display = 'none';
       document.getElementById('w-msg').className = 'msg';
     }
@@ -764,8 +668,6 @@ function initApp() {
   document.getElementById('e-build').addEventListener('click', buildExport);
   document.getElementById('e-download-text').addEventListener('click', downloadText);
   document.getElementById('e-download-image').addEventListener('click', downloadImage);
-  document.getElementById('modal-cancel').addEventListener('click', closeModal);
-  document.getElementById('commentModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeModal(); });
 
   // 前日ボタン（確認タブ）
   document.getElementById('c-prev-day').addEventListener('click', () => {
@@ -825,18 +727,6 @@ function loadWriteData(date) {
     const phoneSection = document.getElementById('w-phone-section');
     if (phoneSection) phoneSection.style.display = res.workStatus === '公休' ? 'none' : 'block';
     if (res.workStatus) { msg.textContent='この日は既に回答済みです。内容を編集して再送信できます。'; msg.className='msg show info'; }
-  });
-  jsonp({ action:'getPersonComment', name:myname }).then(res => {
-    const banner=document.getElementById('w-comment-banner');
-    if (res.comment) {
-      banner.style.display='block';
-      banner.innerHTML=`<div class="my-comment-banner" id="w-banner-inner"><div class="banner-head">💬 本社からコメントが届いています　▾</div><div class="banner-body">${res.commenter?'<b>'+esc(res.commenter)+'</b>：':''} ${esc(res.comment)}</div></div>`;
-      document.getElementById('w-banner-inner').addEventListener('click',function(){
-        const body=this.querySelector('.banner-body'),open=body.style.display==='block';
-        body.style.display=open?'none':'block';
-        this.querySelector('.banner-head').textContent='💬 本社からコメントが届いています　'+(open?'▾':'▴');
-      });
-    } else { banner.style.display='none'; }
   });
   jsonp({ action:'getStatusForDate', date }).then(list=>{
     list.forEach(item=>{ if(item.name===myname) return; const row=document.querySelector(`.other-row[data-name="${item.name}"]`); if(!row) return; row.querySelectorAll('.other-btn').forEach(b=>b.classList.toggle('selected',b.dataset.value===item.workStatus)); });
@@ -921,25 +811,18 @@ function jumpToWrite(date, name) {
 function refreshGrid() {
   const ym=document.getElementById('c-month').value, box=document.getElementById('c-grid');
   box.innerHTML='<div class="loading">読み込み中…</div>';
-  Promise.all([
-    jsonp({ action:'getMonthStatus', month:ym }),
-    jsonp({ action:'getAllPersonComments' })
-  ]).then(([data, comments]) => {
-    personComments = comments;
+  jsonp({ action:'getMonthStatus', month:ym }).then(data => {
     const dates=Object.keys(data).sort();
     if (dates.length===0) { box.innerHTML='<div class="loading">この月の回答はまだありません</div>'; return; }
     const table=document.createElement('table'); table.className='grid';
-    // ヘッダー
     const hr=document.createElement('tr');
     hr.innerHTML='<th>日付</th>';
     STAFF.forEach(name=>{
-      const hasCmt=comments[name]&&comments[name].comment;
       const th=document.createElement('th'); th.className='name-th';
-      th.innerHTML=`<div class="th-inner"><span>${name}</span><button class="th-comment-btn ${hasCmt?'has-comment':''}" data-name="${name}">💬${hasCmt?'あり':'コメント'}</button></div>`;
+      th.innerHTML='<div class="th-inner"><span>'+name+'</span></div>';
       hr.appendChild(th);
     });
     table.appendChild(hr);
-    // データ行
     dates.forEach(d=>{
       const tr=document.createElement('tr');
       tr.innerHTML=`<td class="date-cell">${fmtJP(d)}</td>`;
@@ -954,11 +837,6 @@ function refreshGrid() {
       table.appendChild(tr);
     });
     box.innerHTML=''; box.appendChild(table);
-    // コメントボタン
-    table.querySelectorAll('.th-comment-btn').forEach(btn=>btn.addEventListener('click', e=>{
-      e.stopPropagation();
-      openCommentModal(btn.dataset.name);
-    }));
   });
 }
 function onGridCellClick(e) {
@@ -973,37 +851,6 @@ function onGridCellClick(e) {
 // ============================================================
 // コメントモーダル
 // ============================================================
-let modalTargetName = '';
-function openCommentModal(name) {
-  modalTargetName = name;
-  document.getElementById('modal-title').textContent = name + ' へのコメント';
-  document.getElementById('modal-sub').textContent   = 'スプレッドシートに全履歴が保存されます。本人が次回ログイン時に通知されます。';
-  const entry = personComments[name];
-  const cur   = document.getElementById('modal-current');
-  if (entry && entry.comment) {
-    cur.style.display = 'block';
-    cur.textContent   = '現在：' + (entry.commenter ? entry.commenter + '「' : '「') + entry.comment + '」';
-  } else { cur.style.display = 'none'; }
-  document.getElementById('modal-commenter').value = entry && entry.commenter ? entry.commenter : '';
-  document.getElementById('modal-text').value      = '';
-  document.getElementById('commentModal').classList.add('open');
-  document.getElementById('modal-text').focus();
-  document.getElementById('modal-send').onclick = sendComment;
-}
-function closeModal() {
-  document.getElementById('commentModal').classList.remove('open');
-}
-function sendComment() {
-  const commenter = document.getElementById('modal-commenter').value.trim();
-  const comment   = document.getElementById('modal-text').value.trim();
-  const btn       = document.getElementById('modal-send');
-  if (!comment) { document.getElementById('modal-text').focus(); return; }
-  btn.disabled = true; btn.textContent = '送信中…';
-  postData({ action:'savePersonComment', name:modalTargetName, comment, commenter }).then(res => {
-    btn.disabled = false; btn.textContent = '送　信';
-    if (res.success) { closeModal(); refreshGrid(); }
-  }).catch(()=>{ btn.disabled=false; btn.textContent='送　信'; });
-}
 
 // ============================================================
 // まとめるタブ
