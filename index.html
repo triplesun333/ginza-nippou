@@ -294,6 +294,9 @@ table.grid td.date-cell{text-align:left;font-weight:400;white-space:nowrap;paddi
 
   <!-- 申し送りタブ -->
   <div class="panel" id="panel-oshirase">
+    <div class="card" style="padding:12px 18px;background:var(--navy-dark);color:rgba(255,255,255,.7);font-size:12px;letter-spacing:.5px;">
+      現在の操作ユーザー：<span id="o-current-name" style="color:var(--gold);font-weight:600;">（名前を選択してください）</span>
+    </div>
     <div class="card">
       <div class="card-title">新しい申し送りを作成</div>
       <label>宛先</label>
@@ -381,6 +384,7 @@ function initApp(){
     let saved=localStorage.getItem(MYNAME_KEY);
     if(saved==='加藤愛美'){saved='加藤愛実';localStorage.setItem(MYNAME_KEY,saved);}
     if(saved&&STAFF.includes(saved))sel.value=saved;
+    if(sel.value) document.getElementById('o-current-name').textContent=sel.value;
     buildMyStatusButtons(); buildOthersRows(); buildDestButtons();
     if(sel.value) loadWriteData(document.getElementById('w-date').value);
     refreshCheck(); refreshGrid(); refreshOshirase();
@@ -406,6 +410,7 @@ function initApp(){
   document.getElementById('w-myname').addEventListener('change',()=>{
     const name=document.getElementById('w-myname').value;
     if(name){localStorage.setItem(MYNAME_KEY,name);document.getElementById('o-author').value=name;}
+    document.getElementById('o-current-name').textContent=name||'（名前を選択してください）';
     buildOthersRows();
     if(name) loadWriteData(document.getElementById('w-date').value);
     else{document.getElementById('w-oshirase-banner').style.display='none';document.getElementById('w-missing-block').style.display='none';document.getElementById('w-msg').className='msg';}
@@ -843,18 +848,25 @@ function buildOshiraseCardEl(item,myname,showConfirm){
   const div=document.createElement('div'); div.className='oshirase-card'+(isUnread?' unread':'');
   const confirmedNames=item.confirmed.join('、')||'なし';
   const remainingNames=item.remaining.join('、')||'全員確認済み';
+  const confirmBtns=(showConfirm&&myname)
+    ? (isUnread
+        ? '<button class="oshirase-confirm-btn" data-id="'+esc(item.id)+'" data-action="mark">✓ 確認済みにする</button>'
+        : '<button class="oshirase-confirm-btn" data-id="'+esc(item.id)+'" data-action="unmark" style="background:#8a8a9a;">↩ 未確認に戻す</button>')
+    : '';
   div.innerHTML='<div class="oshirase-header">'
     +'<div><span class="oshirase-meta">'+esc(item.created)+' '+esc(item.author)+'</span><span class="oshirase-dest">宛先：'+esc(item.dest)+'</span></div>'
     +'</div>'
     +'<div class="oshirase-content">'+esc(item.content)+'</div>'
     +'<div class="oshirase-remaining">✓ 確認済み：'+esc(confirmedNames)+'　未確認：'+esc(remainingNames)+'</div>'
-    +(showConfirm&&isUnread&&myname?'<button class="oshirase-confirm-btn" data-id="'+esc(item.id)+'">✓ 確認済みにする</button>':'');
-  if(showConfirm&&isUnread&&myname){
-    div.querySelector('.oshirase-confirm-btn').addEventListener('click',function(){
-      const btn=this; btn.disabled=true; btn.textContent='処理中…';
-      postData({action:'markOshiraseRead',id:item.id,name:myname}).then(res=>{
+    +confirmBtns;
+  const btn=div.querySelector('.oshirase-confirm-btn');
+  if(btn){
+    btn.addEventListener('click',function(){
+      const action=this.dataset.action; this.disabled=true; this.textContent='処理中…';
+      const apiAction=action==='mark'?'markOshiraseRead':'unmarkOshiraseRead';
+      postData({action:apiAction,id:item.id,name:myname}).then(res=>{
         if(res.success){refreshOshirase();loadWriteData(document.getElementById('w-date').value);}
-        else{btn.disabled=false;btn.textContent='✓ 確認済みにする';}
+        else{this.disabled=false;this.textContent=action==='mark'?'✓ 確認済みにする':'↩ 未確認に戻す';}
       });
     });
   }
