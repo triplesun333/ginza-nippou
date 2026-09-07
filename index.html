@@ -204,9 +204,9 @@ table.grid td.date-cell{text-align:left;font-weight:400;white-space:nowrap;paddi
   <header><h1>GINZA DAILY REPORT</h1><p>銀座店スタッフ 業務報告</p></header>
   <div class="tabs">
     <div class="tab active" data-tab="write"><span class="tab-inner">書　く</span></div>
-    <div class="tab" data-tab="check"><span class="tab-inner">確認・過去</span></div>
-    <div class="tab" data-tab="export"><span class="tab-inner">まとめる</span></div>
+    <div class="tab" data-tab="check"><span class="tab-inner">閲覧・検索</span></div>
     <div class="tab" data-tab="oshirase" id="tab-oshirase"><span class="tab-inner">申し送り</span></div>
+    <div class="tab" data-tab="export"><span class="tab-inner">本社スタッフ用</span></div>
   </div>
 
   <!-- 書くタブ -->
@@ -277,12 +277,18 @@ table.grid td.date-cell{text-align:left;font-weight:400;white-space:nowrap;paddi
     <div class="card">
       <div class="card-title">キーワード検索</div>
       <input type="text" id="s-query" placeholder="例：ブログ、お客様、潤ボーロ…" style="margin-bottom:10px;">
-      <div style="display:flex;gap:8px;margin-bottom:10px;">
-        <select id="s-staff" style="flex:1;">
+      <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;">
+        <select id="s-staff" style="flex:1.2;">
           <option value="全員">全員</option>
         </select>
-        <input type="date" id="s-from" style="flex:1;" placeholder="開始日">
-        <input type="date" id="s-to" style="flex:1;" placeholder="終了日">
+        <div style="flex:1.5;display:flex;align-items:center;gap:4px;">
+          <span style="font-size:11px;color:var(--muted);white-space:nowrap;">から</span>
+          <input type="date" id="s-from" style="flex:1;">
+        </div>
+        <div style="flex:1.5;display:flex;align-items:center;gap:4px;">
+          <span style="font-size:11px;color:var(--muted);white-space:nowrap;">まで</span>
+          <input type="date" id="s-to" style="flex:1;">
+        </div>
       </div>
       <button class="main-btn" id="s-search" style="margin-top:0;">検　索</button>
       <div id="s-results" style="margin-top:14px;"></div>
@@ -298,7 +304,7 @@ table.grid td.date-cell{text-align:left;font-weight:400;white-space:nowrap;paddi
     </div>
     <div class="card">
       <div class="card-title">月次勤務一覧</div>
-      <div class="hint">セルをタップで社長報告済みのオン/オフ　<span style="color:var(--green);font-weight:600;">✓</span>＝社長報告済み</div>
+      <div class="hint">セルをタップで社長確認済みのオン/オフ　<span style="color:var(--green);font-weight:600;">✓</span>＝社長確認済み</div>
       <input type="month" id="c-month" style="margin-top:10px;">
       <div id="c-grid"></div>
     </div>
@@ -749,7 +755,7 @@ function refreshCheck(){
       const storeLine=(item.submitted&&(item.clients||item.purchases))?'<div class="status-note">👥 接客 '+esc(item.clients||'0')+'名／購入 '+esc(item.purchases||'0')+'名</div>':'';
       const shareLine=item.shareSalon?'<div class="status-note">🏢 シェアサロン勤務あり</div>':'';
       const noteLine=item.note?'<div class="status-note">◎ '+esc(item.note)+'</div>':'';
-      const btnLabel=item.checked?'✓ 社長報告済':'社長へ報告';
+      const btnLabel=item.checked?'✓ 社長確認済':'社長確認済みにする';
       row.innerHTML='<div class="badge '+sl+'">'+sl+'</div>'
         +'<div class="status-body">'
         +'<div class="status-name-row"><div class="status-name">'+item.name+'</div>'
@@ -763,7 +769,7 @@ function refreshCheck(){
     box.querySelectorAll('.edit-link').forEach(el=>el.addEventListener('click',()=>jumpToWrite(date,el.dataset.name)));
     box.querySelectorAll('.check-inline').forEach(el=>el.addEventListener('click',()=>{
       const nc=!el.classList.contains('checked'); el.textContent='…';
-      postData({action:'setChecked',date,name:el.dataset.name,checked:nc?'true':'false'}).then(()=>{el.classList.toggle('checked',nc);el.textContent=nc?'✓ 社長報告済':'社長へ報告';refreshGrid();});
+      postData({action:'setChecked',date,name:el.dataset.name,checked:nc?'true':'false'}).then(()=>{el.classList.toggle('checked',nc);el.textContent=nc?'✓ 社長確認済':'社長確認済みにする';refreshGrid();});
     }));
   });
 }
@@ -862,7 +868,7 @@ function buildExport(){
     let html='<h2>業務報告書　'+fmtJP(date)+'</h2>';
     list.forEach(item=>{
       const st=item.workStatus||'未回答',bg=cMap[st]||'rgba(192,96,106,.08)',fg=fMap[st]||'#c0606a';
-      const checkedBadge=item.checked?'<span class="export-status" style="background:#edf5ef;color:#5a9a6a;">✓ 社長報告済</span>':'';
+      const checkedBadge=item.checked?'<span class="export-status" style="background:#edf5ef;color:#5a9a6a;">✓ 社長確認済</span>':'';
       const exportNote=item.note?'<div class="export-note">◎ '+esc(item.note)+'</div>':'';
       const exportPhone=(item.phoneTransfer||item.phoneOrder)?'<div class="export-note">☎ 取次 '+esc(item.phoneTransfer||'0')+'件／受注 '+esc(item.phoneOrder||'0')+'件</div>':'';
       const exportStore=(item.clients||item.purchases)?'<div class="export-note">👥 接客 '+esc(item.clients||'0')+'名／購入 '+esc(item.purchases||'0')+'名</div>':'';
@@ -880,7 +886,7 @@ function downloadText(){
   const list=JSON.parse(preview.dataset.raw),date=preview.dataset.date;
   let text='業務報告書　'+fmtJP(date)+'\n\n';
   list.forEach(item=>{
-    text+='■ '+item.name+'（'+(item.workStatus||'未回答')+'）'+(item.checked?' ✓社長報告済':'')+'\n';
+    text+='■ '+item.name+'（'+(item.workStatus||'未回答')+'）'+(item.checked?' ✓社長確認済':'')+'\n';
     text+=(item.content||'（記入なし）')+'\n';
     if(item.note) text+='◎ '+item.note+'\n';
     if(item.phoneTransfer||item.phoneOrder) text+='☎ 取次 '+(item.phoneTransfer||'0')+'件／受注 '+(item.phoneOrder||'0')+'件\n';
@@ -888,6 +894,15 @@ function downloadText(){
     text+='\n';
   });
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'})); a.download='業務報告書_'+date+'.txt'; a.click();
+
+  // 提出済みスタッフに社長確認済みを自動チェック
+  const submitted=list.filter(item=>item.submitted&&!item.checked);
+  if(submitted.length>0){
+    Promise.all(submitted.map(item=>postData({action:'setChecked',date,name:item.name,checked:'true'}))).then(()=>{
+      // まとめるタブのプレビューを更新
+      buildExport();
+    });
+  }
 }
 function downloadImage(){
   const preview=document.getElementById('exportPreview'); if(!preview.dataset.raw)return;
