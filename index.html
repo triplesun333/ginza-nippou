@@ -837,7 +837,7 @@ function refreshOshirase(){
     allBox.innerHTML='';
     if(!list||list.length===0){allBox.innerHTML='<div class="loading">アクティブな申し送りはありません</div>';return;}
     list.forEach(item=>{
-      const div=buildOshiraseCardEl(item,myname,false);
+      const div=buildOshiraseCardEl(item,myname,true);
       allBox.appendChild(div);
     });
   });
