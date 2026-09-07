@@ -19,8 +19,8 @@ body{margin:0;font-family:var(--sans);font-weight:300;background:var(--bg);color
 header{background:var(--navy-dark);color:white;padding:22px 20px 18px;text-align:center;position:relative;overflow:hidden;}
 header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
 header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 40%,transparent);}
-header h1{margin:0;font-family:var(--serif);font-size:19px;font-weight:500;letter-spacing:3px;}
-header p{margin:5px 0 0;font-size:11px;letter-spacing:2px;color:var(--gold-light);font-weight:300;}
+header h1{margin:0;font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:4px;text-shadow:0 1px 8px rgba(0,0,0,.3);}
+header p{margin:7px 0 0;font-size:11px;letter-spacing:3px;color:var(--gold-light);font-weight:300;}
 #loginScreen{max-width:360px;margin:60px auto;padding:40px 32px;background:white;border-radius:4px;box-shadow:0 2px 20px rgba(28,41,81,.08);text-align:center;}
 #loginScreen h2{font-family:var(--serif);font-size:20px;font-weight:500;color:var(--navy);letter-spacing:2px;margin:0 0 6px;}
 #loginScreen p{color:var(--muted);font-size:13px;margin:0 0 24px;}
@@ -29,11 +29,18 @@ header p{margin:5px 0 0;font-size:11px;letter-spacing:2px;color:var(--gold-light
 #loginScreen button{width:100%;padding:13px;margin-top:14px;border:none;background:var(--navy);color:white;font-size:14px;font-weight:500;letter-spacing:2px;cursor:pointer;}
 #loginError{color:var(--red);font-size:12px;margin-top:10px;display:none;}
 #app{display:none;}
-.tabs{display:flex;background:var(--navy-dark);position:sticky;top:0;z-index:10;}
-.tab{flex:1;text-align:center;padding:12px 2px;font-size:11px;font-weight:400;letter-spacing:1px;color:rgba(255,255,255,.45);cursor:pointer;border-bottom:2px solid transparent;}
-.tab.active{color:var(--gold);border-bottom:2px solid var(--gold);}
+.tabs{display:flex;background:var(--navy-dark);position:sticky;top:0;z-index:10;border-bottom:1px solid rgba(201,164,90,.15);}
+.tab{flex:1;text-align:center;padding:14px 4px;font-size:11px;font-weight:500;letter-spacing:1.2px;color:rgba(255,255,255,.45);cursor:pointer;border-bottom:3px solid transparent;transition:color .2s,background .2s;position:relative;}
+.tab:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.05);}
+.tab.active{color:var(--gold);border-bottom:3px solid var(--gold);background:rgba(201,164,90,.07);}
+.tab-badge{position:absolute;top:5px;right:4px;background:var(--red);color:white;border-radius:10px;padding:1px 5px;font-size:9px;font-weight:700;line-height:1.4;animation:badgePulse 1.4s infinite;}
+.tab.alert-tab{color:#ff9999;}
+.tab.alert-tab .tab-inner{animation:tabShake .5s ease;}
+@keyframes badgePulse{0%,100%{transform:scale(1);}50%{transform:scale(1.2);}}
+@keyframes tabShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-2px);}75%{transform:translateX(2px);}}
 .panel{display:none;padding:16px;max-width:600px;margin:0 auto;}
-.panel.active{display:block;}
+.panel.active{display:block;animation:panelIn .18s ease;}
+@keyframes panelIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
 .card{background:var(--card);border-radius:4px;padding:18px;margin-bottom:14px;box-shadow:0 1px 6px rgba(28,41,81,.06);}
 .card-title{font-family:var(--serif);font-size:14px;font-weight:500;color:var(--navy);letter-spacing:1px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
 .card-title::before{content:'';display:inline-block;width:3px;height:14px;background:var(--gold);border-radius:2px;flex-shrink:0;}
@@ -184,10 +191,10 @@ table.grid td.date-cell{text-align:left;font-weight:400;white-space:nowrap;paddi
 <div id="app">
   <header><h1>GINZA DAILY REPORT</h1><p>銀座店スタッフ 業務報告</p></header>
   <div class="tabs">
-    <div class="tab active" data-tab="write">書　く</div>
-    <div class="tab" data-tab="check">確認・過去</div>
-    <div class="tab" data-tab="export">まとめる</div>
-    <div class="tab" data-tab="oshirase">申し送り</div>
+    <div class="tab active" data-tab="write"><span class="tab-inner">書　く</span></div>
+    <div class="tab" data-tab="check"><span class="tab-inner">確認・過去</span></div>
+    <div class="tab" data-tab="export"><span class="tab-inner">まとめる</span></div>
+    <div class="tab" data-tab="oshirase" id="tab-oshirase"><span class="tab-inner">申し送り</span></div>
   </div>
 
   <!-- 書くタブ -->
@@ -567,6 +574,23 @@ function updateMetricsDisplay(){
   if(status==='公休'){document.getElementById('w-metrics-card').style.display='none';}
 }
 
+function updateOshiraseTabBadge(count){
+  const tab=document.getElementById('tab-oshirase');
+  if(!tab)return;
+  // 既存バッジ削除
+  const existing=tab.querySelector('.tab-badge');
+  if(existing)existing.remove();
+  if(count>0){
+    const badge=document.createElement('span');
+    badge.className='tab-badge';
+    badge.textContent=count;
+    tab.appendChild(badge);
+    tab.classList.add('alert-tab');
+  } else {
+    tab.classList.remove('alert-tab');
+  }
+}
+
 async function loadWriteData(date){
   const myname=document.getElementById('w-myname').value;
   document.getElementById('w-msg').className='msg';
@@ -589,6 +613,7 @@ async function loadWriteData(date){
   // 申し送り通知
   const oshiraseRes=await jsonp({action:'getMyOshirase',name:myname}).catch(()=>[]);
   myOshiraseCount=Array.isArray(oshiraseRes)?oshiraseRes.length:0;
+  updateOshiraseTabBadge(myOshiraseCount);
   const oshiraseBanner=document.getElementById('w-oshirase-banner');
   const goBtn=document.getElementById('btn-go-oshirase');
   if(myOshiraseCount>0){
