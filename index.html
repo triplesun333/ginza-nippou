@@ -178,6 +178,18 @@ table.grid td.date-cell{text-align:left;font-weight:400;white-space:nowrap;paddi
 .other-btn.sel-新宿店勤務.selected{background:#5a6fa0;color:white;border-color:#5a6fa0;}
 .expander-head{font-size:12px;font-weight:500;color:var(--gold);letter-spacing:1px;cursor:pointer;user-select:none;}
 .loading{text-align:center;color:var(--muted);font-size:13px;padding:20px 0;}
+.search-result{padding:12px 0;border-bottom:1px solid var(--border);}
+.search-result:last-child{border-bottom:none;}
+.search-result-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;}
+.search-type-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:2px;}
+.search-type-badge.日報{background:rgba(28,41,81,.1);color:var(--navy);}
+.search-type-badge.申し送り{background:rgba(201,164,90,.15);color:#8a6a2a;}
+.search-date{font-size:11px;color:var(--muted);}
+.search-name{font-size:12px;font-weight:600;color:var(--navy);}
+.search-content{font-size:13px;color:#4a5060;white-space:pre-wrap;line-height:1.6;}
+.search-content mark{background:rgba(201,164,90,.35);color:var(--navy);border-radius:2px;padding:0 2px;}
+.search-note{font-size:12px;color:#8a6a2a;margin-top:4px;white-space:pre-wrap;}
+.search-total{font-size:12px;color:var(--muted);margin-bottom:10px;}
 </style>
 </head>
 <body>
@@ -262,6 +274,19 @@ table.grid td.date-cell{text-align:left;font-weight:400;white-space:nowrap;paddi
 
   <!-- 確認・過去タブ -->
   <div class="panel" id="panel-check">
+    <div class="card">
+      <div class="card-title">キーワード検索</div>
+      <input type="text" id="s-query" placeholder="例：ブログ、お客様、潤ボーロ…" style="margin-bottom:10px;">
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <select id="s-staff" style="flex:1;">
+          <option value="全員">全員</option>
+        </select>
+        <input type="date" id="s-from" style="flex:1;" placeholder="開始日">
+        <input type="date" id="s-to" style="flex:1;" placeholder="終了日">
+      </div>
+      <button class="main-btn" id="s-search" style="margin-top:0;">検　索</button>
+      <div id="s-results" style="margin-top:14px;"></div>
+    </div>
     <div class="card">
       <div class="card-title">日別の確認</div>
       <label>日付</label>
@@ -388,6 +413,9 @@ function initApp(){
     const sel=document.getElementById('w-myname');
     const emptyOpt=document.createElement('option'); emptyOpt.value=''; emptyOpt.textContent='選択してください'; sel.appendChild(emptyOpt);
     STAFF.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});
+    // 検索のスタッフ選択肢も追加
+    const sSel=document.getElementById('s-staff');
+    STAFF.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sSel.appendChild(o);});
     let saved=localStorage.getItem(MYNAME_KEY);
     if(saved==='加藤愛美'){saved='加藤愛実';localStorage.setItem(MYNAME_KEY,saved);}
     if(saved&&STAFF.includes(saved))sel.value=saved;
@@ -434,6 +462,8 @@ function initApp(){
     this.textContent=(open?'＋':'－')+' 他メンバーの勤務区分を入力する（任意）';
   });
   document.getElementById('w-submit').addEventListener('click',submitWrite);
+  document.getElementById('s-search').addEventListener('click',runSearch);
+  document.getElementById('s-query').addEventListener('keydown',e=>{if(e.key==='Enter')runSearch();});
   document.getElementById('c-date').addEventListener('change',refreshCheck);
   document.getElementById('c-month').addEventListener('change',refreshGrid);
   document.getElementById('e-build').addEventListener('click',buildExport);
@@ -746,6 +776,46 @@ function jumpToWrite(date,name){
   document.getElementById('w-myname').value=name;
   localStorage.setItem(MYNAME_KEY,name);
   buildOthersRows(); loadWriteData(date);
+}
+// ============================================================
+// 検索
+// ============================================================
+function runSearch(){
+  const query=document.getElementById('s-query').value.trim();
+  const staff=document.getElementById('s-staff').value;
+  const from=document.getElementById('s-from').value;
+  const to=document.getElementById('s-to').value;
+  const box=document.getElementById('s-results');
+  const btn=document.getElementById('s-search');
+  box.innerHTML='<div class="loading">検索中…</div>';
+  btn.disabled=true;
+  jsonp({action:'searchAll',query,staff,fromDate:from,toDate:to}).then(res=>{
+    btn.disabled=false; box.innerHTML='';
+    if(!res.results||res.results.length===0){box.innerHTML='<div class="loading">該当する結果が見つかりませんでした</div>';return;}
+    const total=document.createElement('div'); total.className='search-total'; total.textContent=res.total+'件見つかりました';
+    box.appendChild(total);
+    res.results.forEach(item=>{
+      const div=document.createElement('div'); div.className='search-result';
+      const isOshi=item.type==='申し送り';
+      const dateLabel=item.date+(isOshi&&item.dest?' → 宛先：'+esc(item.dest):'');
+      const statusLabel=!isOshi&&item.workStatus?'<span style="font-size:10px;color:var(--muted);margin-left:4px;">'+esc(item.workStatus)+'</span>':'';
+      const archivedLabel=isOshi&&item.archived?'<span style="font-size:10px;color:var(--muted);margin-left:4px;">（アーカイブ済み）</span>':'';
+      div.innerHTML='<div class="search-result-header">'
+        +'<span class="search-type-badge '+item.type+'">'+item.type+'</span>'
+        +'<span class="search-date">'+esc(dateLabel)+'</span>'
+        +'<span class="search-name">'+esc(item.name)+'</span>'
+        +statusLabel+archivedLabel+'</div>'
+        +(item.content?'<div class="search-content">'+highlight(item.content,query)+'</div>':'')
+        +(item.note?'<div class="search-note">◎ '+highlight(item.note,query)+'</div>':'');
+      box.appendChild(div);
+    });
+  }).catch(()=>{btn.disabled=false;box.innerHTML='<div class="loading">通信エラーが発生しました</div>';});
+}
+function highlight(text,query){
+  const safe=esc(text);
+  if(!query)return safe;
+  try{const q=query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return safe.replace(new RegExp(q,'gi'),m=>'<mark>'+m+'</mark>');}
+  catch(e){return safe;}
 }
 function refreshGrid(){
   const ym=document.getElementById('c-month').value, box=document.getElementById('c-grid');
