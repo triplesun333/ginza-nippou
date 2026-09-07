@@ -4,413 +4,176 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>銀座店 日報</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600&family=Noto+Sans+JP:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --navy:       #1c2951;
-    --navy-dark:  #141d3a;
-    --navy-light: #2d3f6e;
-    --gold:       #c9a45a;
-    --gold-light: #f0e4c0;
-    --gold-pale:  #faf6ec;
-    --bg:         #f4f2ee;
-    --card:       #ffffff;
-    --text:       #1c2951;
-    --muted:      #8a8a9a;
-    --green:      #5a9a6a;
-    --red:        #c0606a;
-    --border:     #e4dfd5;
-    --serif: 'Shippori Mincho', 'Georgia', serif;
-    --sans:  'Noto Sans JP', -apple-system, sans-serif;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: var(--sans);
-    font-weight: 300;
-    background: var(--bg);
-    color: var(--text);
-    padding-bottom: 48px;
-    -webkit-font-smoothing: antialiased;
-  }
+:root{
+  --navy:#1c2951;--navy-dark:#141d3a;--navy-light:#2d3f6e;
+  --gold:#c9a45a;--gold-light:#f0e4c0;--gold-pale:#faf6ec;
+  --bg:#f4f2ee;--card:#fff;--text:#1c2951;--muted:#8a8a9a;
+  --green:#5a9a6a;--red:#c0606a;--orange:#c07a2a;--border:#e4dfd5;
+  --serif:'Shippori Mincho','Georgia',serif;
+  --sans:'Noto Sans JP',-apple-system,sans-serif;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:var(--sans);font-weight:300;background:var(--bg);color:var(--text);padding-bottom:60px;-webkit-font-smoothing:antialiased;}
+header{background:var(--navy-dark);color:white;padding:22px 20px 18px;text-align:center;position:relative;overflow:hidden;}
+header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 40%,transparent);}
+header h1{margin:0;font-family:var(--serif);font-size:19px;font-weight:500;letter-spacing:3px;}
+header p{margin:5px 0 0;font-size:11px;letter-spacing:2px;color:var(--gold-light);font-weight:300;}
+#loginScreen{max-width:360px;margin:60px auto;padding:40px 32px;background:white;border-radius:4px;box-shadow:0 2px 20px rgba(28,41,81,.08);text-align:center;}
+#loginScreen h2{font-family:var(--serif);font-size:20px;font-weight:500;color:var(--navy);letter-spacing:2px;margin:0 0 6px;}
+#loginScreen p{color:var(--muted);font-size:13px;margin:0 0 24px;}
+#loginScreen input{width:100%;padding:13px;border:1px solid var(--border);border-radius:3px;font-size:16px;text-align:center;font-family:var(--sans);outline:none;}
+#loginScreen input:focus{border-color:var(--gold);}
+#loginScreen button{width:100%;padding:13px;margin-top:14px;border:none;background:var(--navy);color:white;font-size:14px;font-weight:500;letter-spacing:2px;cursor:pointer;}
+#loginError{color:var(--red);font-size:12px;margin-top:10px;display:none;}
+#app{display:none;}
+.tabs{display:flex;background:var(--navy-dark);position:sticky;top:0;z-index:10;}
+.tab{flex:1;text-align:center;padding:12px 2px;font-size:11px;font-weight:400;letter-spacing:1px;color:rgba(255,255,255,.45);cursor:pointer;border-bottom:2px solid transparent;}
+.tab.active{color:var(--gold);border-bottom:2px solid var(--gold);}
+.panel{display:none;padding:16px;max-width:600px;margin:0 auto;}
+.panel.active{display:block;}
+.card{background:var(--card);border-radius:4px;padding:18px;margin-bottom:14px;box-shadow:0 1px 6px rgba(28,41,81,.06);}
+.card-title{font-family:var(--serif);font-size:14px;font-weight:500;color:var(--navy);letter-spacing:1px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.card-title::before{content:'';display:inline-block;width:3px;height:14px;background:var(--gold);border-radius:2px;flex-shrink:0;}
+label{display:block;font-size:11px;font-weight:500;letter-spacing:1.5px;color:var(--muted);margin-bottom:6px;margin-top:14px;text-transform:uppercase;}
+label:first-child{margin-top:0;}
+select,input[type="date"],input[type="month"],textarea,input[type="text"],input[type="number"]{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:3px;font-size:14px;font-family:var(--sans);font-weight:300;background:#fdfcfb;color:var(--text);outline:none;}
+select:focus,input:focus,textarea:focus{border-color:var(--gold);}
+textarea{min-height:110px;resize:vertical;line-height:1.7;}
+.hint{font-size:11px;color:var(--muted);margin-top:5px;}
+.main-btn{width:100%;padding:12px;border:none;border-radius:3px;background:var(--navy);color:white;font-size:13px;font-weight:500;letter-spacing:2px;font-family:var(--sans);margin-top:14px;cursor:pointer;transition:background .2s;}
+.main-btn:hover{background:var(--navy-light);}
+.main-btn.secondary{background:transparent;color:var(--navy);border:1px solid var(--navy);}
+.main-btn.secondary:hover{background:var(--navy);color:white;}
+button:disabled{opacity:.45;}
+.msg{margin-top:12px;padding:10px 14px;border-radius:3px;font-size:13px;display:none;}
+.msg.show{display:block;}
+.msg.ok{background:#edf5ef;color:var(--green);}
+.msg.info{background:var(--gold-pale);color:#8a6a2a;border:1px solid var(--gold-light);}
+.msg.err{background:#fdf0ef;color:var(--red);border:1px solid #e8b8b4;}
 
-  /* ===== ヘッダー ===== */
-  header {
-    background: var(--navy-dark);
-    color: white;
-    padding: 28px 20px 22px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  header::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  }
-  header::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold) 40%, transparent);
-  }
-  header h1 {
-    margin: 0;
-    font-family: var(--serif);
-    font-size: 20px;
-    font-weight: 500;
-    letter-spacing: 3px;
-    color: white;
-  }
-  header p {
-    margin: 6px 0 0;
-    font-size: 11px;
-    letter-spacing: 2px;
-    color: var(--gold-light);
-    font-weight: 300;
-  }
+/* === 勤務区分 === */
+.status-btns{display:flex;gap:8px;margin-top:7px;}
+.status-btn{flex:1;padding:10px 4px;text-align:center;border:1px solid var(--border);border-radius:3px;font-size:12px;font-weight:500;cursor:pointer;background:white;color:var(--muted);font-family:var(--sans);transition:all .15s;}
+.status-btn.sel-本社勤務.selected{background:var(--navy);color:white;border-color:var(--navy);}
+.status-btn.sel-公休.selected{background:var(--muted);color:white;border-color:var(--muted);}
+.status-btn.sel-新宿店勤務.selected{background:#5a6fa0;color:white;border-color:#5a6fa0;}
+.share-toggle{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;border:1px solid var(--border);border-radius:3px;cursor:pointer;background:white;}
+.share-toggle.active{background:rgba(201,164,90,.1);border-color:var(--gold);}
+.share-chk{width:18px;height:18px;border:2px solid var(--border);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;}
+.share-toggle.active .share-chk{background:var(--gold);border-color:var(--gold);color:white;}
+.share-label{font-size:12px;font-weight:500;color:var(--muted);}
+.share-toggle.active .share-label{color:var(--orange);}
 
-  /* ===== ログイン ===== */
-  #loginScreen {
-    max-width: 360px;
-    margin: 60px auto;
-    padding: 40px 32px;
-    background: white;
-    border-radius: 4px;
-    box-shadow: 0 2px 20px rgba(28,41,81,.08);
-    text-align: center;
-  }
-  #loginScreen h2 {
-    font-family: var(--serif);
-    font-size: 20px;
-    font-weight: 500;
-    color: var(--navy);
-    letter-spacing: 2px;
-    margin: 0 0 6px;
-  }
-  #loginScreen p { color: var(--muted); font-size: 13px; margin: 0 0 24px; }
-  #loginScreen input {
-    width: 100%;
-    padding: 13px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    font-size: 16px;
-    text-align: center;
-    font-family: var(--sans);
-    outline: none;
-    transition: border-color .2s;
-  }
-  #loginScreen input:focus { border-color: var(--gold); }
-  #loginScreen button {
-    width: 100%;
-    padding: 13px;
-    margin-top: 14px;
-    border: none;
-    background: var(--navy);
-    color: white;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    font-family: var(--sans);
-    cursor: pointer;
-    transition: background .2s;
-  }
-  #loginScreen button:hover { background: var(--navy-light); }
-  #loginError { color: var(--red); font-size: 12px; margin-top: 10px; display: none; }
+/* === クイックアクション === */
+.quick-btns{display:flex;gap:8px;margin-bottom:14px;}
+.quick-btn{flex:1;padding:10px 8px;border:1px solid var(--border);border-radius:3px;background:white;font-size:11px;font-weight:500;color:var(--navy);cursor:pointer;text-align:center;letter-spacing:.5px;}
+.quick-btn.has-badge{border-color:var(--red);color:var(--red);}
+.badge-count{display:inline-block;background:var(--red);color:white;border-radius:10px;padding:1px 6px;font-size:10px;margin-left:4px;}
 
-  #app { display: none; }
+/* === 未提出エラー === */
+.missing-block{background:#fdf0ef;border:1px solid #e8b8b4;border-left:3px solid var(--red);border-radius:3px;padding:14px;margin-bottom:14px;}
+.missing-block b{color:var(--red);}
+.missing-date-link{display:inline-block;margin:2px 4px 2px 0;padding:3px 8px;background:white;border:1px solid #e8b8b4;border-radius:3px;font-size:12px;color:var(--red);cursor:pointer;text-decoration:underline;}
 
-  /* ===== タブ ===== */
-  .tabs {
-    display: flex;
-    background: var(--navy-dark);
-    position: sticky; top: 0; z-index: 10;
-  }
-  .tab {
-    flex: 1;
-    text-align: center;
-    padding: 14px 4px;
-    font-size: 12px;
-    font-weight: 400;
-    letter-spacing: 1.5px;
-    color: rgba(255,255,255,.45);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: color .2s;
-  }
-  .tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); }
+/* === 申し送りバナー === */
+.oshirase-banner{background:linear-gradient(135deg,#fff8e1,#ffe0b2);border:1.5px solid var(--orange);border-radius:4px;padding:14px 16px;margin-bottom:14px;cursor:pointer;}
+.oshirase-banner-head{font-size:13px;font-weight:600;color:var(--orange);display:flex;align-items:center;gap:6px;}
+.oshirase-banner-sub{font-size:12px;color:#8a5a1a;margin-top:4px;}
 
-  .panel { display: none; padding: 20px 16px; max-width: 600px; margin: 0 auto; }
-  .panel.active { display: block; }
+/* === チェックリスト === */
+.checklist-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.checklist-item:last-child{border-bottom:none;}
+.checklist-label{font-size:13px;font-weight:500;color:var(--navy);}
+.checklist-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.check-btns{display:flex;gap:6px;flex-shrink:0;}
+.check-btn{padding:6px 12px;border:1px solid var(--border);border-radius:3px;font-size:11px;font-weight:500;cursor:pointer;background:white;color:var(--muted);font-family:var(--sans);}
+.check-btn.sel-ok.active{background:var(--green);color:white;border-color:var(--green);}
+.check-btn.sel-ng.active{background:#e0e0e0;color:#666;border-color:#bbb;}
+.blog-btns{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.blog-btn{padding:6px 10px;border:1px solid var(--border);border-radius:3px;font-size:11px;font-weight:500;cursor:pointer;background:white;color:var(--muted);}
+.blog-btn.active{background:var(--navy);color:white;border-color:var(--navy);}
+.chappy-notice{background:var(--gold-pale);border:1px solid var(--gold-light);border-left:3px solid var(--gold);border-radius:3px;padding:10px 12px;margin-top:8px;font-size:12px;color:#8a6a2a;display:none;}
+.chappy-link{display:inline-block;margin-top:6px;padding:5px 12px;background:var(--navy);color:white;border-radius:3px;font-size:11px;font-weight:500;text-decoration:none;}
 
-  /* ===== カード ===== */
-  .card {
-    background: var(--card);
-    border-radius: 4px;
-    padding: 20px;
-    margin-bottom: 16px;
-    box-shadow: 0 1px 6px rgba(28,41,81,.06);
-  }
-  .card-title {
-    font-family: var(--serif);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--navy);
-    letter-spacing: 1px;
-    margin-bottom: 14px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .card-title::before {
-    content: '';
-    display: inline-block;
-    width: 3px; height: 14px;
-    background: var(--gold);
-    border-radius: 2px;
-    flex-shrink: 0;
-  }
+/* === 数値入力 === */
+.metrics-row{display:flex;gap:8px;margin-top:7px;}
+.metric-field{flex:1;display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:3px;padding:8px 10px;background:#fdfcfb;}
+.metric-label{font-size:12px;color:var(--navy);font-weight:500;flex-shrink:0;white-space:nowrap;}
+.metric-field input[type="number"]{border:none;padding:0;text-align:right;font-size:15px;width:100%;background:transparent;}
+.metric-unit{font-size:11px;color:var(--muted);flex-shrink:0;}
 
-  /* ===== フォーム要素 ===== */
-  label {
-    display: block;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 1.5px;
-    color: var(--muted);
-    margin-bottom: 7px;
-    margin-top: 16px;
-    text-transform: uppercase;
-  }
-  label:first-child { margin-top: 0; }
-  select, input[type="date"], input[type="month"], textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    font-size: 14px;
-    font-family: var(--sans);
-    font-weight: 300;
-    background: #fdfcfb;
-    color: var(--text);
-    outline: none;
-    transition: border-color .2s;
-  }
-  select:focus, input:focus, textarea:focus { border-color: var(--gold); }
-  textarea { min-height: 120px; resize: vertical; line-height: 1.7; }
-  .hint { font-size: 11px; color: var(--muted); margin-top: 6px; letter-spacing: .3px; }
+/* === 確認タブ === */
+.date-with-btn{display:flex;gap:8px;align-items:center;}
+.date-with-btn input{flex:1;}
+.prev-day-btn{flex-shrink:0;padding:10px 12px;background:white;border:1px solid var(--border);border-radius:3px;font-size:12px;font-weight:500;color:var(--navy);cursor:pointer;}
+.status-row{display:flex;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--border);gap:10px;}
+.status-row:last-child{border-bottom:none;}
+.badge{flex-shrink:0;min-width:58px;text-align:center;font-size:10px;font-weight:500;padding:4px 5px;border-radius:2px;margin-top:2px;}
+.badge.本社勤務{background:rgba(28,41,81,.08);color:var(--navy);}
+.badge.公休{background:rgba(138,138,154,.1);color:var(--muted);}
+.badge.新宿店勤務{background:rgba(90,111,160,.1);color:#5a6fa0;}
+.badge.未回答{background:rgba(192,96,106,.08);color:var(--red);}
+.status-body{flex:1;min-width:0;}
+.status-name-row{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.status-name{font-weight:500;font-size:14px;}
+.status-content{font-size:13px;color:#4a5060;white-space:pre-wrap;line-height:1.6;margin-top:5px;}
+.status-content.empty{color:var(--muted);font-style:italic;}
+.status-note{font-size:12px;color:#8a6a2a;margin-top:5px;white-space:pre-wrap;}
+.edit-link{font-size:11px;color:var(--gold);text-decoration:underline;cursor:pointer;margin-top:7px;display:inline-block;}
+.check-inline{flex-shrink:0;font-size:10px;font-weight:500;padding:4px 8px;border-radius:2px;border:1px solid var(--border);color:var(--muted);cursor:pointer;background:white;white-space:nowrap;}
+.check-inline.checked{background:var(--green);color:white;border-color:var(--green);}
+table.grid{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px;}
+table.grid th,table.grid td{border:1px solid var(--border);text-align:center;padding:6px 3px;}
+table.grid th{background:var(--navy-dark);color:rgba(255,255,255,.8);font-weight:400;}
+table.grid td.date-cell{text-align:left;font-weight:400;white-space:nowrap;padding-left:7px;color:var(--navy);}
+.grid-cell{cursor:pointer;}
+.grid-cell:hover{background:rgba(201,164,90,.06);}
+.mk-本社勤務{color:var(--navy);font-weight:500;}
+.mk-公休{color:var(--muted);font-weight:400;}
+.mk-新宿店勤務{color:#5a6fa0;font-weight:500;}
+.mk-未{color:#ccc;font-weight:300;}
+.cell-chk{font-size:8px;color:var(--green);font-weight:700;display:block;}
 
-  /* ===== ボタン ===== */
-  .main-btn {
-    width: 100%;
-    padding: 13px;
-    border: none;
-    border-radius: 3px;
-    background: var(--navy);
-    color: white;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    font-family: var(--sans);
-    margin-top: 16px;
-    cursor: pointer;
-    transition: background .2s;
-  }
-  .main-btn:hover { background: var(--navy-light); }
-  .main-btn.secondary {
-    background: transparent;
-    color: var(--navy);
-    border: 1px solid var(--navy);
-  }
-  .main-btn.secondary:hover { background: var(--navy); color: white; }
-  button:disabled { opacity: .45; }
+/* === 申し送りタブ === */
+.oshirase-card{background:white;border-radius:4px;padding:14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(28,41,81,.06);border-left:3px solid var(--gold);}
+.oshirase-card.unread{border-left-color:var(--orange);}
+.oshirase-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;}
+.oshirase-meta{font-size:11px;color:var(--muted);}
+.oshirase-dest{display:inline-block;padding:2px 8px;border-radius:2px;font-size:10px;font-weight:600;background:rgba(201,164,90,.15);color:#8a6a2a;margin-left:5px;}
+.oshirase-content{font-size:13px;white-space:pre-wrap;line-height:1.6;color:var(--text);}
+.oshirase-remaining{font-size:11px;color:var(--muted);margin-top:6px;}
+.oshirase-confirm-btn{margin-top:8px;padding:7px 16px;border:none;border-radius:3px;background:var(--orange);color:white;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);}
+.dest-select{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px;}
+.dest-btn{padding:7px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px;cursor:pointer;background:white;color:var(--muted);font-family:var(--sans);}
+.dest-btn.active{background:var(--navy);color:white;border-color:var(--navy);}
 
-  /* ===== 勤務区分ボタン ===== */
-  .status-btns { display: flex; gap: 8px; margin-top: 7px; }
-  .status-btn {
-    flex: 1; padding: 10px 4px; text-align: center;
-    border: 1px solid var(--border); border-radius: 3px;
-    font-size: 12px; font-weight: 500; letter-spacing: .5px;
-    cursor: pointer; background: white; color: var(--muted);
-    font-family: var(--sans); transition: all .15s;
-  }
-  .status-btn.sel-本社勤務.selected  { background: var(--navy);  color: white; border-color: var(--navy);  }
-  .status-btn.sel-公休.selected       { background: var(--muted); color: white; border-color: var(--muted); }
-  .status-btn.sel-新宿店勤務.selected { background: #5a6fa0;      color: white; border-color: #5a6fa0;      }
-
-  /* ===== メッセージ ===== */
-  .msg { margin-top: 12px; padding: 10px 14px; border-radius: 3px; font-size: 13px; display: none; }
-  .msg.show { display: block; }
-  .msg.ok   { background: #edf5ef; color: var(--green); }
-  .msg.info { background: var(--gold-pale); color: #8a6a2a; border: 1px solid var(--gold-light); }
-
-  .date-with-btn {
-    display: flex; gap: 8px; align-items: center;
-  }
-  .date-with-btn input[type="date"] { flex: 1; }
-  .prev-day-btn {
-    flex-shrink: 0;
-    padding: 10px 12px;
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--navy);
-    cursor: pointer;
-    white-space: nowrap;
-    font-family: var(--sans);
-    transition: all .15s;
-  }
-  .prev-day-btn:hover { background: var(--navy); color: white; border-color: var(--navy); }
-
-  /* ===== 前日未入力アラート ===== */
-  .yesterday-alert {
-    background: #fdf0ef;
-    border: 1px solid #e8b8b4;
-    border-left: 3px solid var(--red);
-    border-radius: 3px;
-    padding: 13px 16px;
-    margin-bottom: 16px;
-    font-size: 12.5px;
-    color: #9a4a44;
-    line-height: 1.6;
-  }
-  .yesterday-alert b { color: var(--red); }
-
-  /* ===== 電話対応件数 ===== */
-  .phone-row { display: flex; gap: 10px; margin-top: 7px; }
-  .phone-field {
-    flex: 1; display: flex; align-items: center; gap: 6px;
-    border: 1px solid var(--border); border-radius: 3px;
-    padding: 8px 10px; background: #fdfcfb;
-  }
-  .phone-field-label {
-    font-size: 12px; color: var(--navy); font-weight: 500;
-    flex-shrink: 0; white-space: nowrap;
-  }
-  .phone-field input[type="number"] {
-    border: none; padding: 0; text-align: right;
-    font-size: 15px; width: 100%; background: transparent;
-  }
-  .phone-field input[type="number"]:focus { border: none; }
-  .phone-field-unit { font-size: 11px; color: var(--muted); flex-shrink: 0; }
-
-  /* ===== 他メンバー折りたたみ ===== */
-  .expander-head {
-    font-size: 12px; font-weight: 500; color: var(--gold);
-    letter-spacing: 1px; cursor: pointer; user-select: none;
-  }
-  .other-row {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border);
-  }
-  .other-row:last-child { border-bottom: none; }
-  .other-name { font-size: 13px; font-weight: 500; flex-shrink: 0; width: 84px; }
-  .other-btns { display: flex; gap: 6px; flex: 1; }
-  .other-btn {
-    flex: 1; text-align: center; padding: 7px 2px;
-    font-size: 11px; font-weight: 500;
-    border: 1px solid var(--border); border-radius: 3px;
-    cursor: pointer; color: var(--muted); background: white;
-    font-family: var(--sans); transition: all .15s;
-  }
-  .other-btn.sel-本社勤務.selected  { background: var(--navy);  color: white; border-color: var(--navy);  }
-  .other-btn.sel-公休.selected       { background: var(--muted); color: white; border-color: var(--muted); }
-  .other-btn.sel-新宿店勤務.selected { background: #5a6fa0;      color: white; border-color: #5a6fa0;      }
-
-  /* ===== 確認タブ：日次ビュー ===== */
-  .status-row {
-    display: flex; align-items: flex-start;
-    padding: 14px 0; border-bottom: 1px solid var(--border); gap: 12px;
-  }
-  .status-row:last-child { border-bottom: none; }
-  .badge {
-    flex-shrink: 0; min-width: 60px; text-align: center;
-    font-size: 10px; font-weight: 500; letter-spacing: .5px;
-    padding: 5px 6px; border-radius: 2px; margin-top: 2px;
-  }
-  .badge.本社勤務  { background: rgba(28,41,81,.08);  color: var(--navy);  }
-  .badge.公休       { background: rgba(138,138,154,.1); color: var(--muted); }
-  .badge.新宿店勤務 { background: rgba(90,111,160,.1);  color: #5a6fa0;      }
-  .badge.未回答     { background: rgba(192,96,106,.08); color: var(--red);   }
-  .status-body { flex: 1; min-width: 0; }
-  .status-name-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-  .status-name  { font-weight: 500; font-size: 14px; }
-  .status-content { font-size: 13px; color: #4a5060; white-space: pre-wrap; line-height: 1.6; margin-top: 6px; }
-  .status-content.empty { color: var(--muted); font-style: italic; }
-  .status-note  { font-size: 12px; color: #8a6a2a; margin-top: 6px; white-space: pre-wrap; }
-  .edit-link { font-size: 11px; color: var(--gold); text-decoration: underline; cursor: pointer; margin-top: 8px; display: inline-block; letter-spacing: .5px; }
-  .check-inline {
-    flex-shrink: 0; font-size: 10px; font-weight: 500; letter-spacing: .5px;
-    padding: 4px 10px; border-radius: 2px;
-    border: 1px solid var(--border); color: var(--muted);
-    cursor: pointer; background: white; white-space: nowrap;
-    transition: all .15s;
-  }
-  .check-inline.checked { background: var(--green); color: white; border-color: var(--green); }
-
-  /* ===== 月次グリッド ===== */
-  table.grid { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
-  table.grid th, table.grid td {
-    border: 1px solid var(--border); text-align: center; padding: 6px 3px;
-  }
-  table.grid th {
-    background: var(--navy-dark);
-    color: rgba(255,255,255,.8);
-    font-weight: 400; letter-spacing: .5px;
-  }
-  table.grid th.name-th {
-    padding: 0;
-  }
-  .th-inner {
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; gap: 3px; padding: 6px 2px;
-  }
-  table.grid td.date-cell {
-    text-align: left; font-weight: 400; white-space: nowrap; padding-left: 8px;
-    color: var(--navy); font-size: 11px;
-  }
-  .grid-cell { cursor: pointer; transition: background .1s; }
-  .grid-cell:hover { background: rgba(201,164,90,.06); }
-  .mk-本社勤務  { color: var(--navy);  font-weight: 500; }
-  .mk-公休       { color: var(--muted); font-weight: 400; }
-  .mk-新宿店勤務 { color: #5a6fa0;      font-weight: 500; }
-  .mk-未          { color: #ccc;         font-weight: 300; }
-  .cell-chk { font-size: 8px; color: var(--green); font-weight: 700; display: block; }
-
-  /* ===== まとめるタブ ===== */
-  #exportPreview { background: white; padding: 20px 18px; border-radius: 4px; }
-  #exportPreview h2 {
-    font-family: var(--serif);
-    font-size: 17px; font-weight: 500; margin: 0 0 16px;
-    color: var(--navy); letter-spacing: 1px;
-    border-bottom: 1px solid var(--gold-light); padding-bottom: 10px;
-  }
-  .export-block { margin-bottom: 18px; }
-  .export-name  { font-weight: 500; font-size: 14px; letter-spacing: .5px; }
-  .export-status {
-    display: inline-block; font-size: 10px; font-weight: 500;
-    padding: 2px 8px; border-radius: 2px; margin-left: 8px; letter-spacing: .5px;
-  }
-  .export-text { font-size: 13px; white-space: pre-wrap; line-height: 1.7; padding-left: 10px; border-left: 2px solid var(--border); margin-top: 8px; }
-  .export-text.empty { color: var(--muted); font-style: italic; border-left-color: #f0e0e0; }
-  .export-note { font-size: 12px; color: #8a6a2a; margin-top: 6px; }
-  .btn-row { display: flex; gap: 10px; margin-top: 16px; }
-  .btn-row button { margin-top: 0; }
-  .loading { text-align: center; color: var(--muted); font-size: 13px; padding: 24px 0; letter-spacing: .5px; }
+/* === まとめるタブ === */
+#exportPreview{background:white;padding:20px 18px;border-radius:4px;}
+#exportPreview h2{font-family:var(--serif);font-size:17px;font-weight:500;margin:0 0 16px;color:var(--navy);letter-spacing:1px;border-bottom:1px solid var(--gold-light);padding-bottom:10px;}
+.export-block{margin-bottom:16px;}
+.export-name{font-weight:500;font-size:14px;}
+.export-status{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:2px;margin-left:8px;}
+.export-text{font-size:13px;white-space:pre-wrap;line-height:1.7;padding-left:10px;border-left:2px solid var(--border);margin-top:7px;}
+.export-text.empty{color:var(--muted);font-style:italic;border-left-color:#f0e0e0;}
+.export-note{font-size:12px;color:#8a6a2a;margin-top:5px;}
+.btn-row{display:flex;gap:10px;margin-top:14px;}
+.btn-row button{margin-top:0;}
+.other-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.other-row:last-child{border-bottom:none;}
+.other-name{font-size:13px;font-weight:500;flex-shrink:0;width:80px;}
+.other-btns{display:flex;gap:5px;flex:1;}
+.other-btn{flex:1;text-align:center;padding:7px 2px;font-size:11px;font-weight:500;border:1px solid var(--border);border-radius:3px;cursor:pointer;color:var(--muted);background:white;font-family:var(--sans);}
+.other-btn.sel-本社勤務.selected{background:var(--navy);color:white;border-color:var(--navy);}
+.other-btn.sel-公休.selected{background:var(--muted);color:white;border-color:var(--muted);}
+.other-btn.sel-新宿店勤務.selected{background:#5a6fa0;color:white;border-color:#5a6fa0;}
+.expander-head{font-size:12px;font-weight:500;color:var(--gold);letter-spacing:1px;cursor:pointer;user-select:none;}
+.loading{text-align:center;color:var(--muted);font-size:13px;padding:20px 0;}
 </style>
 </head>
 <body>
-
-<!-- ===== ログイン ===== -->
 <div id="loginScreen">
   <h2>銀座店 日報</h2>
   <p>パスワードを入力してください</p>
@@ -418,65 +181,79 @@
   <button id="loginBtn">ログイン</button>
   <div id="loginError">パスワードが正しくありません</div>
 </div>
-
-<!-- ===== アプリ本体 ===== -->
 <div id="app">
-  <header>
-    <h1>GINZA DAILY REPORT</h1>
-    <p>銀座店スタッフ 業務報告</p>
-  </header>
-
+  <header><h1>GINZA DAILY REPORT</h1><p>銀座店スタッフ 業務報告</p></header>
   <div class="tabs">
     <div class="tab active" data-tab="write">書　く</div>
     <div class="tab" data-tab="check">確認・過去</div>
     <div class="tab" data-tab="export">まとめる</div>
+    <div class="tab" data-tab="oshirase">申し送り</div>
   </div>
 
-  <!-- ===== 書くタブ ===== -->
+  <!-- 書くタブ -->
   <div class="panel active" id="panel-write">
     <div class="card">
       <div class="card-title">本日の報告</div>
-      <label>日付</label>
-      <input type="date" id="w-date">
-      <label>名前</label>
-      <select id="w-myname"></select>
+      <label>日付</label><input type="date" id="w-date">
+      <label>名前</label><select id="w-myname"></select>
     </div>
 
-    <div id="w-yesterday-warning" style="display:none;"></div>
+    <div class="quick-btns">
+      <button class="quick-btn" id="btn-go-oshirase">📨 自分宛の申し送り</button>
+      <button class="quick-btn" id="btn-yesterday-report">📋 昨日の全員日報</button>
+    </div>
+
+    <div id="w-oshirase-banner" style="display:none;"></div>
+    <div id="w-missing-block" style="display:none;"></div>
 
     <div class="card">
       <label>勤務区分</label>
       <div class="status-btns" id="w-mystatus-btns"></div>
+      <div class="share-toggle" id="w-share-toggle">
+        <div class="share-chk" id="w-share-chk"></div>
+        <span class="share-label">シェアサロン勤務あり（一部時間）</span>
+      </div>
+    </div>
+
+    <div class="card" id="w-checklist-card">
+      <div class="card-title">本日の必須確認チェック</div>
+      <!-- チェック項目はJSで動的生成 -->
+      <div id="w-checklist-items"></div>
+    </div>
+
+    <div class="card" id="w-metrics-card">
+      <div id="w-phone-section">
+        <label>電話対応件数</label>
+        <div class="metrics-row">
+          <div class="metric-field"><span class="metric-label">取次</span><input type="number" id="w-phone-transfer" inputmode="numeric" min="0" placeholder="0"><span class="metric-unit">件</span></div>
+          <div class="metric-field"><span class="metric-label">受注</span><input type="number" id="w-phone-order" inputmode="numeric" min="0" placeholder="0"><span class="metric-unit">件</span></div>
+        </div>
+      </div>
+      <div id="w-store-section" style="display:none;">
+        <label>接客・販売実績</label>
+        <div class="metrics-row">
+          <div class="metric-field"><span class="metric-label">接客人数</span><input type="number" id="w-clients" inputmode="numeric" min="0" placeholder="0"><span class="metric-unit">名</span></div>
+          <div class="metric-field"><span class="metric-label">購入者数</span><input type="number" id="w-purchases" inputmode="numeric" min="0" placeholder="0"><span class="metric-unit">名</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
       <label>業務内容</label>
       <textarea id="w-content" placeholder="本日の業務内容をご記入ください"></textarea>
       <label>気づいたこと（任意）</label>
       <textarea id="w-note" placeholder="備品不足・要確認事項など" style="min-height:70px;"></textarea>
-
-      <label>電話対応件数</label>
-      <div class="phone-row" id="w-phone-section">
-        <div class="phone-field">
-          <span class="phone-field-label">取次</span>
-          <input type="number" id="w-phone-transfer" inputmode="numeric" min="0" placeholder="0" required>
-          <span class="phone-field-unit">件</span>
-        </div>
-        <div class="phone-field">
-          <span class="phone-field-label">受注</span>
-          <input type="number" id="w-phone-order" inputmode="numeric" min="0" placeholder="0" required>
-          <span class="phone-field-unit">件</span>
-        </div>
-      </div>
-
       <button class="main-btn" id="w-submit">送　信</button>
       <div class="msg" id="w-msg"></div>
     </div>
 
     <div class="card">
       <div class="expander-head" id="w-expander-head">＋ 他メンバーの勤務区分を入力する（任意）</div>
-      <div id="w-others" style="display:none; margin-top:14px;"></div>
+      <div id="w-others" style="display:none;margin-top:12px;"></div>
     </div>
   </div>
 
-  <!-- ===== 確認・過去タブ ===== -->
+  <!-- 確認・過去タブ -->
   <div class="panel" id="panel-check">
     <div class="card">
       <div class="card-title">日別の確認</div>
@@ -485,22 +262,17 @@
         <input type="date" id="c-date">
         <button class="prev-day-btn" id="c-prev-day">◀ 前日</button>
       </div>
-      <div id="c-status" style="margin-top:16px;"></div>
+      <div id="c-status" style="margin-top:14px;"></div>
     </div>
-
     <div class="card">
       <div class="card-title">月次勤務一覧</div>
-      <div class="hint">セルをタップで社長報告済みのオン/オフができます</div>
+      <div class="hint">セルをタップで社長報告済みのオン/オフ　<span style="color:var(--green);font-weight:600;">✓</span>＝社長報告済み</div>
       <input type="month" id="c-month" style="margin-top:10px;">
-      <div class="hint" style="margin-top:6px;">
-        <span class="mk-本社勤務">本社</span>／<span class="mk-新宿店勤務">新宿</span>／<span class="mk-公休">公休</span>／<span class="mk-未">未</span>＝未回答　
-        <span style="color:var(--green);font-weight:600;">✓</span>＝社長報告済み
-      </div>
       <div id="c-grid"></div>
     </div>
   </div>
 
-  <!-- ===== まとめるタブ ===== -->
+  <!-- まとめるタブ -->
   <div class="panel" id="panel-export">
     <div class="card">
       <div class="card-title">日報をまとめる</div>
@@ -519,270 +291,411 @@
       </div>
     </div>
   </div>
-</div>
 
+  <!-- 申し送りタブ -->
+  <div class="panel" id="panel-oshirase">
+    <div class="card">
+      <div class="card-title">新しい申し送りを作成</div>
+      <label>宛先</label>
+      <div class="dest-select" id="o-dest-btns"></div>
+      <label>内容</label>
+      <textarea id="o-content" placeholder="申し送り内容を入力してください" style="min-height:80px;"></textarea>
+      <label>作成者名</label>
+      <input type="text" id="o-author" placeholder="あなたの名前">
+      <button class="main-btn" id="o-submit">申し送りを送信</button>
+      <div class="msg" id="o-msg"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">未確認の申し送り</div>
+      <div id="o-my-list"><div class="loading">読み込み中…</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">全ての申し送り（アクティブ）</div>
+      <div id="o-all-list"><div class="loading">読み込み中…</div></div>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-// ▼▼▼ GASのウェブアプリURLをここに貼る ▼▼▼
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbxyaUOrA7V6mvx2rOjwC9Gg-y2rIGvVmo58lbjSQDzreP_9g5n0KTIDkYS4kOk7SVyVjw/exec';
-// ▲▲▲ ここまで ▲▲▲
+const GAS_URL='https://script.google.com/macros/s/AKfycbxyaUOrA7V6mvx2rOjwC9Gg-y2rIGvVmo58lbjSQDzreP_9g5n0KTIDkYS4kOk7SVyVjw/exec';
+const STORAGE_KEY='ginza_nippou_pw', MYNAME_KEY='ginza_nippou_myname';
+let STAFF=[], WORK_STATUS_LIST=['本社勤務','公休','新宿店勤務'];
+let myMissingDates=[], myOshiraseCount=0;
 
-const STORAGE_KEY = 'ginza_nippou_pw';
-const MYNAME_KEY  = 'ginza_nippou_myname';
-let STAFF = [];
-let WORK_STATUS_LIST = ['本社勤務', '公休', '新宿店勤務'];
-
-// JSONP：読み込み系（URLパラメータで送る）
-let jsonpCounter = 0;
-function jsonp(params) {
-  return new Promise((resolve, reject) => {
-    const cb = 'cb_' + (jsonpCounter++);
-    params.callback = cb;
-    const pw = sessionStorage.getItem(STORAGE_KEY);
-    if (pw) params.pw = pw;
-    const qs = Object.keys(params).map(k => encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');
-    const s = document.createElement('script');
-    s.src = GAS_URL + '?' + qs;
-    window[cb] = d => { resolve(d); delete window[cb]; s.remove(); };
-    s.onerror = () => { reject(new Error('通信エラー')); delete window[cb]; s.remove(); };
+// JSONP (reads)
+let jcnt=0;
+function jsonp(params){
+  return new Promise((resolve,reject)=>{
+    const cb='cb_'+jcnt++; params.callback=cb;
+    const pw=sessionStorage.getItem(STORAGE_KEY); if(pw) params.pw=pw;
+    const qs=Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');
+    const s=document.createElement('script'); s.src=GAS_URL+'?'+qs;
+    window[cb]=d=>{resolve(d);delete window[cb];s.remove();};
+    s.onerror=()=>{reject(new Error('通信エラー'));delete window[cb];s.remove();};
     document.body.appendChild(s);
   });
 }
-
-// POST：書き込み系（長文テキストもURL制限なしで送れる）
-function postData(params) {
-  const pw = sessionStorage.getItem(STORAGE_KEY);
-  if (pw) params.pw = pw;
-  return fetch(GAS_URL, {
-    method: 'POST',
-    body: JSON.stringify(params),
-    redirect: 'follow'
-  }).then(r => r.json()).catch(() => {
-    // フォールバック：POSTが失敗した場合はJSONPで再試行（短いパラメータの場合）
-    return jsonp(params);
-  });
+// POST (writes)
+function postData(params){
+  const pw=sessionStorage.getItem(STORAGE_KEY); if(pw) params.pw=pw;
+  return fetch(GAS_URL,{method:'POST',body:JSON.stringify(params),redirect:'follow'}).then(r=>r.json()).catch(()=>jsonp(params));
 }
 
-// ============================================================
-// ユーティリティ
-// ============================================================
-const todayStr = () => { const d=new Date(),p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; };
-const fmtDate  = d => { const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; };
-const thisMonthStr = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; };
-const youbi = ['日','月','火','水','木','金','土'];
-const fmtJP = s => { const d=new Date(s+'T00:00:00'); return `${d.getMonth()+1}/${d.getDate()}(${youbi[d.getDay()]})`; };
-const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const abbr = { '本社勤務':'本社', '公休':'公休', '新宿店勤務':'新宿' };
+// Utilities
+const todayStr=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;};
+const fmtDate=d=>{const p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;};
+const thisMonthStr=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;};
+const youbi=['日','月','火','水','木','金','土'];
+const fmtJP=s=>{const d=new Date(s+'T00:00:00');return `${d.getMonth()+1}/${d.getDate()}(${youbi[d.getDay()]})`;};
+const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const abbr={'本社勤務':'本社','公休':'公休','新宿店勤務':'新宿'};
 
-// ============================================================
-// ログイン
-// ============================================================
-document.getElementById('loginBtn').addEventListener('click', doLogin);
-document.getElementById('loginPw').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-
-function doLogin() {
-  const pw = document.getElementById('loginPw').value;
-  sessionStorage.setItem(STORAGE_KEY, pw);
-  jsonp({ action:'checkPassword', pw }).then(r => {
-    if (r.valid) { localStorage.setItem(STORAGE_KEY, pw); startApp(); }
-    else { document.getElementById('loginError').style.display='block'; sessionStorage.removeItem(STORAGE_KEY); }
-  }).catch(() => { document.getElementById('loginError').textContent='通信エラーが発生しました'; document.getElementById('loginError').style.display='block'; });
+// Login
+document.getElementById('loginBtn').addEventListener('click',doLogin);
+document.getElementById('loginPw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+function doLogin(){
+  const pw=document.getElementById('loginPw').value;
+  sessionStorage.setItem(STORAGE_KEY,pw);
+  jsonp({action:'checkPassword',pw}).then(r=>{
+    if(r.valid){localStorage.setItem(STORAGE_KEY,pw);startApp();}
+    else{document.getElementById('loginError').style.display='block';sessionStorage.removeItem(STORAGE_KEY);}
+  }).catch(()=>{document.getElementById('loginError').textContent='通信エラーが発生しました';document.getElementById('loginError').style.display='block';});
 }
 (function(){
-  const s = localStorage.getItem(STORAGE_KEY);
-  if (s) { sessionStorage.setItem(STORAGE_KEY, s); jsonp({ action:'checkPassword', pw:s }).then(r=>{ if(r.valid) startApp(); }).catch(()=>{}); }
+  const s=localStorage.getItem(STORAGE_KEY);
+  if(s){sessionStorage.setItem(STORAGE_KEY,s);jsonp({action:'checkPassword',pw:s}).then(r=>{if(r.valid)startApp();}).catch(()=>{});}
 })();
+function startApp(){document.getElementById('loginScreen').style.display='none';document.getElementById('app').style.display='block';initApp();}
 
-function startApp() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  initApp();
-}
+// Init
+let appInitialized=false;
+function initApp(){
+  if(appInitialized)return; appInitialized=true;
 
-// ============================================================
-// 初期化
-// ============================================================
-let appInitialized = false;
-function initApp() {
-  if (appInitialized) return;
-  appInitialized = true;
+  jsonp({action:'getStaffNames'}).then(res=>{
+    STAFF=res.staff; WORK_STATUS_LIST=res.workStatusList;
+    const sel=document.getElementById('w-myname');
+    const emptyOpt=document.createElement('option'); emptyOpt.value=''; emptyOpt.textContent='選択してください'; sel.appendChild(emptyOpt);
+    STAFF.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});
+    let saved=localStorage.getItem(MYNAME_KEY);
+    if(saved==='加藤愛美'){saved='加藤愛実';localStorage.setItem(MYNAME_KEY,saved);}
+    if(saved&&STAFF.includes(saved))sel.value=saved;
+    buildMyStatusButtons(); buildOthersRows(); buildDestButtons();
+    if(sel.value) loadWriteData(document.getElementById('w-date').value);
+    refreshCheck(); refreshGrid(); refreshOshirase();
+    // 申し送りのlocalStorage名前を設定
+    const oAuthor=document.getElementById('o-author');
+    if(sel.value) oAuthor.value=sel.value;
+  });
 
-  jsonp({ action:'getStaffNames' }).then(res => {
-    STAFF = res.staff;
-    WORK_STATUS_LIST = res.workStatusList;
-    const sel = document.getElementById('w-myname');
-    // 空の初期選択肢（誰も選ばれていない状態）
-    const emptyOpt = document.createElement('option');
-    emptyOpt.value = ''; emptyOpt.textContent = '選択してください';
-    sel.appendChild(emptyOpt);
+  document.getElementById('w-date').value=todayStr();
+  document.getElementById('c-date').value=todayStr();
+  document.getElementById('e-date').value=todayStr();
+  document.getElementById('c-month').value=thisMonthStr();
 
-    STAFF.forEach(n => { const o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o); });
-    let saved = localStorage.getItem(MYNAME_KEY);
-    // 旧名前が残っていた場合は新名前に自動移行
-    if (saved === '加藤愛美') { saved = '加藤愛実'; localStorage.setItem(MYNAME_KEY, saved); }
-    if (saved && STAFF.includes(saved)) sel.value = saved;
-    buildMyStatusButtons();
+  document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-'+tab.dataset.tab).classList.add('active');
+    if(tab.dataset.tab==='oshirase') refreshOshirase();
+  }));
+
+  document.getElementById('w-date').addEventListener('change',()=>loadWriteData(document.getElementById('w-date').value));
+  document.getElementById('w-myname').addEventListener('change',()=>{
+    const name=document.getElementById('w-myname').value;
+    if(name){localStorage.setItem(MYNAME_KEY,name);document.getElementById('o-author').value=name;}
     buildOthersRows();
-    // 名前が選ばれているときだけデータを読み込む
-    if (document.getElementById('w-myname').value) {
-      loadWriteData(document.getElementById('w-date').value);
-    }
-    refreshCheck();
-    refreshGrid();
+    if(name) loadWriteData(document.getElementById('w-date').value);
+    else{document.getElementById('w-oshirase-banner').style.display='none';document.getElementById('w-missing-block').style.display='none';document.getElementById('w-msg').className='msg';}
   });
-
-  document.getElementById('w-date').value  = todayStr();
-  document.getElementById('c-date').value  = todayStr();
-  document.getElementById('e-date').value  = todayStr();
-  document.getElementById('c-month').value = thisMonthStr();
-
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById('panel-'+tab.dataset.tab).classList.add('active');
-    });
+  document.getElementById('w-share-toggle').addEventListener('click',()=>{
+    const el=document.getElementById('w-share-toggle');
+    el.classList.toggle('active');
+    document.getElementById('w-share-chk').textContent=el.classList.contains('active')?'✓':'';
+    updateMetricsDisplay();
   });
-  document.getElementById('w-date').addEventListener('change', ()=>loadWriteData(document.getElementById('w-date').value));
-  document.getElementById('w-myname').addEventListener('change', ()=>{
-    const name = document.getElementById('w-myname').value;
-    if (name) localStorage.setItem(MYNAME_KEY, name);
-    buildOthersRows();
-    if (name) loadWriteData(document.getElementById('w-date').value);
-    else {
-      // 未選択に戻したらバナーとメッセージをクリア
-      document.getElementById('w-yesterday-warning').style.display = 'none';
-      document.getElementById('w-msg').className = 'msg';
-    }
-  });
-  document.getElementById('w-expander-head').addEventListener('click', function(){
-    const box=document.getElementById('w-others'), open=box.style.display==='block';
+  document.getElementById('w-expander-head').addEventListener('click',function(){
+    const box=document.getElementById('w-others'),open=box.style.display==='block';
     box.style.display=open?'none':'block';
     this.textContent=(open?'＋':'－')+' 他メンバーの勤務区分を入力する（任意）';
   });
-  document.getElementById('w-submit').addEventListener('click', submitWrite);
-  document.getElementById('c-date').addEventListener('change', refreshCheck);
-  document.getElementById('c-month').addEventListener('change', refreshGrid);
-  document.getElementById('e-build').addEventListener('click', buildExport);
-  document.getElementById('e-download-text').addEventListener('click', downloadText);
-  document.getElementById('e-download-image').addEventListener('click', downloadImage);
-
-  // 前日ボタン（確認タブ）
-  document.getElementById('c-prev-day').addEventListener('click', () => {
-    const cur = document.getElementById('c-date').value;
-    if (!cur) return;
-    const d = new Date(cur + 'T00:00:00');
-    d.setDate(d.getDate() - 1);
-    const prev = fmtDate(d);
-    document.getElementById('c-date').value = prev;
+  document.getElementById('w-submit').addEventListener('click',submitWrite);
+  document.getElementById('c-date').addEventListener('change',refreshCheck);
+  document.getElementById('c-month').addEventListener('change',refreshGrid);
+  document.getElementById('e-build').addEventListener('click',buildExport);
+  document.getElementById('e-download-text').addEventListener('click',downloadText);
+  document.getElementById('e-download-image').addEventListener('click',downloadImage);
+  document.getElementById('c-prev-day').addEventListener('click',()=>{
+    const cur=document.getElementById('c-date').value; if(!cur)return;
+    const d=new Date(cur+'T00:00:00'); d.setDate(d.getDate()-1);
+    document.getElementById('c-date').value=fmtDate(d); refreshCheck();
+  });
+  document.getElementById('e-prev-day').addEventListener('click',()=>{
+    const cur=document.getElementById('e-date').value; if(!cur)return;
+    const d=new Date(cur+'T00:00:00'); d.setDate(d.getDate()-1);
+    document.getElementById('e-date').value=fmtDate(d);
+  });
+  document.getElementById('btn-go-oshirase').addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.querySelector('.tab[data-tab="oshirase"]').classList.add('active');
+    document.getElementById('panel-oshirase').classList.add('active');
+    refreshOshirase();
+  });
+  document.getElementById('btn-yesterday-report').addEventListener('click',()=>{
+    const d=new Date(todayStr()+'T00:00:00'); d.setDate(d.getDate()-1);
+    const yStr=fmtDate(d);
+    document.getElementById('c-date').value=yStr;
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.querySelector('.tab[data-tab="check"]').classList.add('active');
+    document.getElementById('panel-check').classList.add('active');
     refreshCheck();
   });
-
-  // 前日ボタン（まとめるタブ）
-  document.getElementById('e-prev-day').addEventListener('click', () => {
-    const cur = document.getElementById('e-date').value;
-    if (!cur) return;
-    const d = new Date(cur + 'T00:00:00');
-    d.setDate(d.getDate() - 1);
-    document.getElementById('e-date').value = fmtDate(d);
-  });
+  document.getElementById('o-submit').addEventListener('click',submitOshirase);
 }
 
 // ============================================================
 // 書くタブ
 // ============================================================
-function buildMyStatusButtons() {
-  const box = document.getElementById('w-mystatus-btns'); box.innerHTML='';
-  WORK_STATUS_LIST.forEach(s => {
+const CHECKLIST_DEF=[
+  {key:'prevReport', label:'前日日報・スマイル確認', sub:'前日の来店・施術・申し送り内容を確認しましたか？', type:'bool'},
+  {key:'blog', label:'ブログ更新', sub:'銀座/新宿のいずれかを更新。ホットペッパー優先', type:'blog'},
+  {key:'story', label:'Instagramストーリー投稿', sub:'ブログ更新後、ストーリーにも掲載（Google予約リンク必須）', type:'bool'},
+  {key:'estateCheck', label:'エステ予約確認', sub:'LINE・メールからの予約・問い合わせを確認しましたか？', type:'bool'},
+  {key:'mailCheck', label:'メール確認・スタッフ共有', sub:'重要内容は未読に戻す・メモで他スタッフへ共有しましたか？', type:'bool'},
+];
+const BLOG_OPTIONS=[
+  {val:'both', label:'両方更新済み ✓'},
+  {val:'ameblo', label:'アメブロのみ'},
+  {val:'hotpepper', label:'ホットペッパーのみ'},
+];
+let checklistState={prevReport:null, blog:null, story:null, estateCheck:null, mailCheck:null};
+let shareSalonActive=false;
+
+function buildMyStatusButtons(){
+  const box=document.getElementById('w-mystatus-btns'); box.innerHTML='';
+  WORK_STATUS_LIST.forEach(s=>{
     const b=document.createElement('div'); b.className='status-btn sel-'+s; b.textContent=s; b.dataset.value=s;
-    b.addEventListener('click',()=>{
-      box.querySelectorAll('.status-btn').forEach(x=>x.classList.remove('selected')); b.classList.add('selected');
-      // 公休の場合は電話欄を非表示
-      const phoneSection = document.getElementById('w-phone-section');
-      if (phoneSection) phoneSection.style.display = s === '公休' ? 'none' : 'block';
-    });
+    b.addEventListener('click',()=>{box.querySelectorAll('.status-btn').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');updateMetricsDisplay();});
     box.appendChild(b);
   });
 }
-function buildOthersRows() {
+
+function buildOthersRows(){
   const myname=document.getElementById('w-myname').value, box=document.getElementById('w-others'); box.innerHTML='';
-  STAFF.filter(n=>n!==myname).forEach(name => {
+  STAFF.filter(n=>n!==myname).forEach(name=>{
     const row=document.createElement('div'); row.className='other-row'; row.dataset.name=name;
-    row.innerHTML=`<div class="other-name">${name}</div><div class="other-btns">${WORK_STATUS_LIST.map(s=>`<div class="other-btn sel-${s}" data-value="${s}">${s}</div>`).join('')}</div>`;
-    row.querySelectorAll('.other-btn').forEach(b=>b.addEventListener('click',()=>{ row.querySelectorAll('.other-btn').forEach(x=>x.classList.remove('selected')); b.classList.add('selected'); }));
+    row.innerHTML='<div class="other-name">'+name+'</div><div class="other-btns">'+WORK_STATUS_LIST.map(s=>'<div class="other-btn sel-'+s+'" data-value="'+s+'">'+s+'</div>').join('')+'</div>';
+    row.querySelectorAll('.other-btn').forEach(b=>b.addEventListener('click',()=>{row.querySelectorAll('.other-btn').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');}));
     box.appendChild(row);
   });
 }
-function loadWriteData(date) {
-  const myname=document.getElementById('w-myname').value, msg=document.getElementById('w-msg');
-  msg.className='msg';
-  jsonp({ action:'getReportForDate', date, name:myname }).then(res => {
-    document.getElementById('w-content').value = res.content||'';
-    document.getElementById('w-note').value    = res.note||'';
-    document.getElementById('w-phone-transfer').value = res.phoneTransfer || '';
-    document.getElementById('w-phone-order').value    = res.phoneOrder    || '';
-    document.querySelectorAll('#w-mystatus-btns .status-btn').forEach(b=>b.classList.toggle('selected',b.dataset.value===res.workStatus));
-    const phoneSection = document.getElementById('w-phone-section');
-    if (phoneSection) phoneSection.style.display = res.workStatus === '公休' ? 'none' : 'block';
-    if (res.workStatus) { msg.textContent='この日は既に回答済みです。内容を編集して再送信できます。'; msg.className='msg show info'; }
-  });
-  jsonp({ action:'getStatusForDate', date }).then(list=>{
-    list.forEach(item=>{ if(item.name===myname) return; const row=document.querySelector(`.other-row[data-name="${item.name}"]`); if(!row) return; row.querySelectorAll('.other-btn').forEach(b=>b.classList.toggle('selected',b.dataset.value===item.workStatus)); });
-  });
-  // 前日分が未入力のスタッフがいないか確認
-  jsonp({ action:'getYesterdayMissing', date }).then(res => {
-    const box = document.getElementById('w-yesterday-warning');
-    if (res.missing && res.missing.length > 0) {
-      box.style.display = 'block';
-      box.innerHTML = `<div class="yesterday-alert">⚠ <b>${fmtJP(res.yesterdayDate)}</b>分が未入力です！　対象：${res.missing.map(esc).join('、')}</div>`;
-    } else {
-      box.style.display = 'none';
+
+function buildChecklistUI(){
+  const box=document.getElementById('w-checklist-items'); box.innerHTML='';
+  CHECKLIST_DEF.forEach(item=>{
+    const div=document.createElement('div'); div.className='checklist-item';
+    if(item.type==='bool'){
+      div.innerHTML='<div><div class="checklist-label">'+item.label+'</div><div class="checklist-sub">'+item.sub+'</div></div>'
+        +'<div class="check-btns">'
+        +'<div class="check-btn sel-ok" data-key="'+item.key+'" data-val="true">✓ した</div>'
+        +'<div class="check-btn sel-ng" data-key="'+item.key+'" data-val="false">✗ してない</div>'
+        +'</div>';
+      box.appendChild(div);
+      div.querySelectorAll('.check-btn').forEach(b=>b.addEventListener('click',()=>{
+        div.querySelectorAll('.check-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        checklistState[item.key]=b.dataset.val==='true';
+      }));
+    } else if(item.type==='blog'){
+      div.style.display='block'; div.style.padding='10px 0';
+      div.innerHTML='<div class="checklist-label">'+item.label+'</div><div class="checklist-sub">'+item.sub+'</div>'
+        +'<div class="blog-btns">'+BLOG_OPTIONS.map(o=>'<div class="blog-btn" data-val="'+o.val+'">'+o.label+'</div>').join('')+'</div>'
+        +'<div class="chappy-notice" id="chappy-notice"><b>📝 チャッピーへ依頼してください</b><br>片方のブログをもう一方の形式に変換・更新する依頼をチャッピー（ChatGPT）にお願いしてください。<br><a class="chappy-link" href="https://chatgpt.com/" target="_blank">チャッピーを開く →</a></div>';
+      box.appendChild(div);
+      div.querySelectorAll('.blog-btn').forEach(b=>b.addEventListener('click',()=>{
+        div.querySelectorAll('.blog-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active'); checklistState.blog=b.dataset.val;
+        const notice=document.getElementById('chappy-notice');
+        notice.style.display=(b.dataset.val==='ameblo'||b.dataset.val==='hotpepper')?'block':'none';
+      }));
     }
+    if(item.type!=='blog') box.appendChild(div);
   });
 }
-function submitWrite() {
+
+function setChecklistFromData(cl){
+  checklistState={prevReport:null,blog:null,story:null,estateCheck:null,mailCheck:null};
+  if(!cl||typeof cl!=='object')return;
+  const box=document.getElementById('w-checklist-items');
+  ['prevReport','story','estateCheck','mailCheck'].forEach(key=>{
+    if(cl[key]!==undefined&&cl[key]!==null){
+      checklistState[key]=cl[key];
+      const btn=box.querySelector('.check-btn[data-key="'+key+'"][data-val="'+String(cl[key])+'"]');
+      if(btn){box.querySelectorAll('.check-btn[data-key="'+key+'"]').forEach(x=>x.classList.remove('active'));btn.classList.add('active');}
+    }
+  });
+  if(cl.blog){
+    checklistState.blog=cl.blog;
+    const btn=box.querySelector('.blog-btn[data-val="'+cl.blog+'"]');
+    if(btn){box.querySelectorAll('.blog-btn').forEach(x=>x.classList.remove('active'));btn.classList.add('active');}
+    const notice=document.getElementById('chappy-notice');
+    if(notice) notice.style.display=(cl.blog==='ameblo'||cl.blog==='hotpepper')?'block':'none';
+  }
+}
+
+function updateMetricsDisplay(){
+  const sel=document.querySelector('#w-mystatus-btns .status-btn.selected');
+  const status=sel?sel.dataset.value:'';
+  const isStore=status==='新宿店勤務';
+  const isHonsha=status==='本社勤務';
+  const shareActive=document.getElementById('w-share-toggle').classList.contains('active');
+  const showStore=isStore||shareActive;
+  const showPhone=isHonsha;
+  document.getElementById('w-phone-section').style.display=showPhone?'block':'none';
+  document.getElementById('w-store-section').style.display=showStore?'block':'none';
+  document.getElementById('w-metrics-card').style.display=(showPhone||showStore)?'block':'none';
+  // 公休なら両方非表示
+  if(status==='公休'){document.getElementById('w-metrics-card').style.display='none';}
+}
+
+async function loadWriteData(date){
+  const myname=document.getElementById('w-myname').value;
+  document.getElementById('w-msg').className='msg';
+  buildChecklistUI();
+  checklistState={prevReport:null,blog:null,story:null,estateCheck:null,mailCheck:null};
+
+  // 未提出チェック（9/7以降）
+  const missingRes=await jsonp({action:'checkMissingReports',name:myname,date}).catch(()=>({missing:[]}));
+  myMissingDates=missingRes.missing||[];
+  const missingBlock=document.getElementById('w-missing-block');
+  if(myMissingDates.length>0){
+    missingBlock.style.display='block';
+    missingBlock.innerHTML='<div class="missing-block"><b>⚠ 未提出の日報があります</b><br>以下の日付の日報が提出されていません。先に記入してください。<br>'
+      +myMissingDates.map(d=>'<span class="missing-date-link" data-date="'+d+'">'+fmtJP(d)+'</span>').join('')+'</div>';
+    missingBlock.querySelectorAll('.missing-date-link').forEach(el=>el.addEventListener('click',()=>{
+      document.getElementById('w-date').value=el.dataset.date; loadWriteData(el.dataset.date);
+    }));
+  } else { missingBlock.style.display='none'; }
+
+  // 申し送り通知
+  const oshiraseRes=await jsonp({action:'getMyOshirase',name:myname}).catch(()=>[]);
+  myOshiraseCount=Array.isArray(oshiraseRes)?oshiraseRes.length:0;
+  const oshiraseBanner=document.getElementById('w-oshirase-banner');
+  const goBtn=document.getElementById('btn-go-oshirase');
+  if(myOshiraseCount>0){
+    oshiraseBanner.style.display='block';
+    oshiraseBanner.innerHTML='<div class="oshirase-banner" id="oshirase-banner-inner">'
+      +'<div class="oshirase-banner-head">📨 自分宛の未確認申し送りが '+myOshiraseCount+' 件あります</div>'
+      +'<div class="oshirase-banner-sub">申し送りタブで内容を確認し、チェックを入れてください</div>'
+      +'</div>';
+    document.getElementById('oshirase-banner-inner').addEventListener('click',()=>{
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      document.querySelector('.tab[data-tab="oshirase"]').classList.add('active');
+      document.getElementById('panel-oshirase').classList.add('active');
+      refreshOshirase();
+    });
+    goBtn.classList.add('has-badge');
+    goBtn.innerHTML='📨 自分宛の申し送り <span class="badge-count">'+myOshiraseCount+'</span>';
+  } else {
+    oshiraseBanner.style.display='none';
+    goBtn.classList.remove('has-badge');
+    goBtn.textContent='📨 自分宛の申し送り';
+  }
+
+  // 既存データ読み込み
+  const res=await jsonp({action:'getReportForDate',date,name:myname}).catch(()=>({}));
+  document.getElementById('w-content').value=res.content||'';
+  document.getElementById('w-note').value=res.note||'';
+  document.getElementById('w-phone-transfer').value=res.phoneTransfer||'';
+  document.getElementById('w-phone-order').value=res.phoneOrder||'';
+  document.getElementById('w-clients').value=res.clients||'';
+  document.getElementById('w-purchases').value=res.purchases||'';
+  const shareToggle=document.getElementById('w-share-toggle');
+  if(res.shareSalon){shareToggle.classList.add('active');document.getElementById('w-share-chk').textContent='✓';}
+  else{shareToggle.classList.remove('active');document.getElementById('w-share-chk').textContent='';}
+  document.querySelectorAll('#w-mystatus-btns .status-btn').forEach(b=>b.classList.toggle('selected',b.dataset.value===res.workStatus));
+  if(res.checklist&&typeof res.checklist==='object') setChecklistFromData(res.checklist);
+  if(res.workStatus){document.getElementById('w-msg').textContent='この日は既に回答済みです。内容を編集して再送信できます。';document.getElementById('w-msg').className='msg show info';}
+  updateMetricsDisplay();
+
+  // 他メンバーの勤務区分
+  jsonp({action:'getStatusForDate',date}).then(list=>{
+    list.forEach(item=>{if(item.name===myname)return;const row=document.querySelector('.other-row[data-name="'+item.name+'"]');if(!row)return;row.querySelectorAll('.other-btn').forEach(b=>b.classList.toggle('selected',b.dataset.value===item.workStatus));});
+  });
+}
+
+function submitWrite(){
   const date=document.getElementById('w-date').value, myname=document.getElementById('w-myname').value;
   const msg=document.getElementById('w-msg');
-  if (!myname) { msg.textContent='名前を選択してください。'; msg.className='msg show info'; return; }
-  const content=document.getElementById('w-content').value.trim(), note=document.getElementById('w-note').value.trim();
-  const phoneTransfer=document.getElementById('w-phone-transfer').value.trim();
-  const phoneOrder=document.getElementById('w-phone-order').value.trim();
+  if(!myname){msg.textContent='名前を選択してください。';msg.className='msg show err';return;}
+  if(myMissingDates.length>0){msg.textContent='未提出の日報（'+myMissingDates.map(fmtJP).join('、')+'）を先に記入してください。';msg.className='msg show err';return;}
   const mySel=document.querySelector('#w-mystatus-btns .status-btn.selected');
-  if (!mySel) { msg.textContent='勤務区分を選択してください。'; msg.className='msg show info'; return; }
-  const isKyuukyuu = mySel.dataset.value === '公休';
-  if (!isKyuukyuu && (phoneTransfer==='' || phoneOrder==='')) { msg.textContent='電話対応件数（取次・受注）を入力してください。0件の場合は0と入力してください。'; msg.className='msg show info'; return; }
-  const others=Array.from(document.querySelectorAll('.other-row')).map(r=>{ const s=r.querySelector('.other-btn.selected'); return s?{name:r.dataset.name,workStatus:s.dataset.value}:null; }).filter(Boolean);
+  if(!mySel){msg.textContent='勤務区分を選択してください。';msg.className='msg show err';return;}
+  const status=mySel.dataset.value;
+  const shareActive=document.getElementById('w-share-toggle').classList.contains('active');
+  const isStore=status==='新宿店勤務'||shareActive;
+  const isHonsha=status==='本社勤務';
+  // チェックリスト確認
+  let clOk=true;
+  CHECKLIST_DEF.forEach(item=>{
+    if(item.type==='bool'&&checklistState[item.key]===null) clOk=false;
+    if(item.type==='blog'&&!checklistState.blog) clOk=false;
+  });
+  if(!clOk&&status!=='公休'){msg.textContent='チェックリストをすべて入力してください。';msg.className='msg show err';return;}
+  if(isHonsha&&status!=='公休'){
+    const pt=document.getElementById('w-phone-transfer').value.trim(), po=document.getElementById('w-phone-order').value.trim();
+    if(pt===''||po===''){msg.textContent='電話対応件数（取次・受注）を入力してください。';msg.className='msg show err';return;}
+  }
+  if(isStore&&!shareActive===false||isStore){
+    // store metrics required
+  }
+  const content=document.getElementById('w-content').value.trim(), note=document.getElementById('w-note').value.trim();
+  const phoneTransfer=isHonsha?document.getElementById('w-phone-transfer').value.trim():'';
+  const phoneOrder=isHonsha?document.getElementById('w-phone-order').value.trim():'';
+  const clients=isStore?document.getElementById('w-clients').value.trim():'';
+  const purchases=isStore?document.getElementById('w-purchases').value.trim():'';
+  const shareSalon=shareActive;
+  const checklistJson=JSON.stringify(checklistState);
+  const others=Array.from(document.querySelectorAll('.other-row')).map(r=>{const s=r.querySelector('.other-btn.selected');return s?{name:r.dataset.name,workStatus:s.dataset.value}:null;}).filter(Boolean);
   const btn=document.getElementById('w-submit'); btn.disabled=true; btn.textContent='送信中…';
-  Promise.all([postData({action:'submitReport',date,name:myname,workStatus:mySel.dataset.value,content,note,phoneTransfer,phoneOrder}),...others.map(o=>postData({action:'updateWorkStatusOnly',date,name:o.name,workStatus:o.workStatus}))]).then(results=>{
+  Promise.all([
+    postData({action:'submitReport',date,name:myname,workStatus:status,content,note,phoneTransfer,phoneOrder,shareSalon,checklist:checklistJson,clients,purchases}),
+    ...others.map(o=>postData({action:'updateWorkStatusOnly',date,name:o.name,workStatus:o.workStatus}))
+  ]).then(results=>{
     btn.disabled=false; btn.textContent='送　信';
     const failed=results.filter(r=>!r.success);
-    msg.textContent=failed.length===0?'送信しました。お疲れ様でした。':`一部失敗しました（${failed.length}件）`;
-    msg.className='msg show '+(failed.length===0?'ok':'info');
-  }).catch(()=>{ btn.disabled=false; btn.textContent='送　信'; msg.textContent='通信エラーが発生しました'; msg.className='msg show info'; });
+    msg.textContent=failed.length===0?'送信しました。お疲れ様でした。':'一部失敗しました（'+failed.length+'件）';
+    msg.className='msg show '+(failed.length===0?'ok':'err');
+    if(failed.length===0) loadWriteData(date); // 未提出チェックを更新
+  }).catch(()=>{btn.disabled=false;btn.textContent='送　信';msg.textContent='通信エラーが発生しました';msg.className='msg show err';});
 }
 
 // ============================================================
-// 確認タブ：日次
+// 確認タブ
 // ============================================================
-function refreshCheck() {
+function refreshCheck(){
   const date=document.getElementById('c-date').value, box=document.getElementById('c-status');
   box.innerHTML='<div class="loading">読み込み中…</div>';
-  jsonp({ action:'getStatusForDate', date }).then(list=>{
+  jsonp({action:'getStatusForDate',date}).then(list=>{
     box.innerHTML='';
     list.forEach(item=>{
       const sl=item.workStatus||'未回答', row=document.createElement('div'); row.className='status-row';
-      const phoneLine = (item.submitted && item.workStatus!=='公休' && (item.phoneTransfer||item.phoneOrder))
-        ? '<div class="status-note">☎ 取次 '+esc(item.phoneTransfer||'0')+'件／受注 '+esc(item.phoneOrder||'0')+'件</div>' : '';
-      const noteLine = item.note ? '<div class="status-note">◎ '+esc(item.note)+'</div>' : '';
-      const btnLabel = item.checked ? '✓ 社長報告済' : '社長へ報告';
+      const phoneLine=(item.submitted&&item.workStatus!=='公休'&&(item.phoneTransfer||item.phoneOrder))?'<div class="status-note">☎ 取次 '+esc(item.phoneTransfer||'0')+'件／受注 '+esc(item.phoneOrder||'0')+'件</div>':'';
+      const storeLine=(item.submitted&&(item.clients||item.purchases))?'<div class="status-note">👥 接客 '+esc(item.clients||'0')+'名／購入 '+esc(item.purchases||'0')+'名</div>':'';
+      const shareLine=item.shareSalon?'<div class="status-note">🏢 シェアサロン勤務あり</div>':'';
+      const noteLine=item.note?'<div class="status-note">◎ '+esc(item.note)+'</div>':'';
+      const btnLabel=item.checked?'✓ 社長報告済':'社長へ報告';
       row.innerHTML='<div class="badge '+sl+'">'+sl+'</div>'
         +'<div class="status-body">'
         +'<div class="status-name-row"><div class="status-name">'+item.name+'</div>'
         +'<div class="check-inline '+(item.checked?'checked':'')+'" data-name="'+item.name+'">'+btnLabel+'</div></div>'
         +'<div class="status-content '+(item.content?'':'empty')+'">'+(item.content?esc(item.content):(item.submitted?'（記入なし）':'未回答'))+'</div>'
-        +noteLine+phoneLine
+        +noteLine+phoneLine+storeLine+shareLine
         +'<span class="edit-link" data-name="'+item.name+'">'+(item.submitted?'編集する':'書く')+'</span>'
         +'</div>';
       box.appendChild(row);
@@ -790,11 +703,11 @@ function refreshCheck() {
     box.querySelectorAll('.edit-link').forEach(el=>el.addEventListener('click',()=>jumpToWrite(date,el.dataset.name)));
     box.querySelectorAll('.check-inline').forEach(el=>el.addEventListener('click',()=>{
       const nc=!el.classList.contains('checked'); el.textContent='…';
-      postData({action:'setChecked',date,name:el.dataset.name,checked:nc?'true':'false'}).then(()=>{ el.classList.toggle('checked',nc); el.textContent=nc?'✓ 社長報告済':'社長へ報告'; refreshGrid(); });
+      postData({action:'setChecked',date,name:el.dataset.name,checked:nc?'true':'false'}).then(()=>{el.classList.toggle('checked',nc);el.textContent=nc?'✓ 社長報告済':'社長へ報告';refreshGrid();});
     }));
   });
 }
-function jumpToWrite(date, name) {
+function jumpToWrite(date,name){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelector('.tab[data-tab="write"]').classList.add('active');
@@ -804,91 +717,164 @@ function jumpToWrite(date, name) {
   localStorage.setItem(MYNAME_KEY,name);
   buildOthersRows(); loadWriteData(date);
 }
-
-// ============================================================
-// 確認タブ：月次グリッド
-// ============================================================
-function refreshGrid() {
+function refreshGrid(){
   const ym=document.getElementById('c-month').value, box=document.getElementById('c-grid');
   box.innerHTML='<div class="loading">読み込み中…</div>';
-  jsonp({ action:'getMonthStatus', month:ym }).then(data => {
+  jsonp({action:'getMonthStatus',month:ym}).then(data=>{
     const dates=Object.keys(data).sort();
-    if (dates.length===0) { box.innerHTML='<div class="loading">この月の回答はまだありません</div>'; return; }
+    if(dates.length===0){box.innerHTML='<div class="loading">この月の回答はまだありません</div>';return;}
     const table=document.createElement('table'); table.className='grid';
-    const hr=document.createElement('tr');
-    hr.innerHTML='<th>日付</th>';
-    STAFF.forEach(name=>{
-      const th=document.createElement('th'); th.className='name-th';
-      th.innerHTML='<div class="th-inner"><span>'+name+'</span></div>';
-      hr.appendChild(th);
-    });
+    const hr=document.createElement('tr'); hr.innerHTML='<th>日付</th>';
+    STAFF.forEach(name=>{const th=document.createElement('th');th.innerHTML='<span>'+name+'</span>';hr.appendChild(th);});
     table.appendChild(hr);
     dates.forEach(d=>{
-      const tr=document.createElement('tr');
-      tr.innerHTML=`<td class="date-cell">${fmtJP(d)}</td>`;
+      const tr=document.createElement('tr'); tr.innerHTML='<td class="date-cell">'+fmtJP(d)+'</td>';
       STAFF.forEach(name=>{
-        const cell=data[d][name], st=cell?cell.workStatus:'', ck=cell?cell.checked:false;
+        const cell=data[d][name],st=cell?cell.workStatus:'',ck=cell?cell.checked:false;
         const td=document.createElement('td'); td.className='grid-cell';
         td.dataset.date=d; td.dataset.name=name; td.dataset.checked=ck?'1':'0';
-        td.innerHTML=(st?`<span class="mk-${st}">${abbr[st]||st}</span>`:`<span class="mk-未">未</span>`)+(ck?'<span class="cell-chk">✓</span>':'');
-        td.addEventListener('click', onGridCellClick);
-        tr.appendChild(td);
+        td.innerHTML=(st?'<span class="mk-'+st+'">'+(abbr[st]||st)+'</span>':'<span class="mk-未">未</span>')+(ck?'<span class="cell-chk">✓</span>':'');
+        td.addEventListener('click',onGridCellClick); tr.appendChild(td);
       });
       table.appendChild(tr);
     });
     box.innerHTML=''; box.appendChild(table);
   });
 }
-function onGridCellClick(e) {
-  const td=e.currentTarget, date=td.dataset.date, name=td.dataset.name, nowCk=td.dataset.checked==='1', nextCk=!nowCk;
+function onGridCellClick(e){
+  const td=e.currentTarget,date=td.dataset.date,name=td.dataset.name,nowCk=td.dataset.checked==='1',nextCk=!nowCk;
   td.dataset.checked=nextCk?'1':'0';
   const existingChk=td.querySelector('.cell-chk');
-  if (nextCk&&!existingChk) { const s=document.createElement('span'); s.className='cell-chk'; s.textContent='✓'; td.appendChild(s); }
-  else if (!nextCk&&existingChk) existingChk.remove();
-  postData({action:'setChecked',date,name,checked:nextCk?'true':'false'}).then(()=>{ if(document.getElementById('c-date').value===date) refreshCheck(); });
+  if(nextCk&&!existingChk){const s=document.createElement('span');s.className='cell-chk';s.textContent='✓';td.appendChild(s);}
+  else if(!nextCk&&existingChk) existingChk.remove();
+  postData({action:'setChecked',date,name,checked:nextCk?'true':'false'}).then(()=>{if(document.getElementById('c-date').value===date) refreshCheck();});
 }
-
-// ============================================================
-// コメントモーダル
-// ============================================================
 
 // ============================================================
 // まとめるタブ
 // ============================================================
-function buildExport() {
-  const date=document.getElementById('e-date').value, result=document.getElementById('e-result'), preview=document.getElementById('exportPreview');
+function buildExport(){
+  const date=document.getElementById('e-date').value,result=document.getElementById('e-result'),preview=document.getElementById('exportPreview');
   preview.innerHTML='<div class="loading">読み込み中…</div>'; result.style.display='block';
-  jsonp({ action:'getStatusForDate', date }).then(list=>{
+  jsonp({action:'getStatusForDate',date}).then(list=>{
     const cMap={'本社勤務':'rgba(28,41,81,.08)','公休':'rgba(138,138,154,.1)','新宿店勤務':'rgba(90,111,160,.1)'};
     const fMap={'本社勤務':'#1c2951','公休':'#8a8a9a','新宿店勤務':'#5a6fa0'};
-    let html=`<h2>業務報告書　${fmtJP(date)}</h2>`;
+    let html='<h2>業務報告書　'+fmtJP(date)+'</h2>';
     list.forEach(item=>{
-      const st=item.workStatus||'未回答', bg=cMap[st]||'rgba(192,96,106,.08)', fg=fMap[st]||'#c0606a';
-      const checkedBadge = item.checked ? '<span class="export-status" style="background:#edf5ef;color:#5a9a6a;">✓ 社長報告済</span>' : '';
-      const exportNote = item.note ? '<div class="export-note">◎ '+esc(item.note)+'</div>' : '';
-      const exportPhone = (item.phoneTransfer||item.phoneOrder) ? '<div class="export-note">☎ 取次 '+esc(item.phoneTransfer||'0')+'件／受注 '+esc(item.phoneOrder||'0')+'件</div>' : '';
-      html += '<div class="export-block">'
-        +'<span class="export-name">■ '+item.name+'</span>'
-        +'<span class="export-status" style="background:'+bg+';color:'+fg+';">'+st+'</span>'
-        +checkedBadge
+      const st=item.workStatus||'未回答',bg=cMap[st]||'rgba(192,96,106,.08)',fg=fMap[st]||'#c0606a';
+      const checkedBadge=item.checked?'<span class="export-status" style="background:#edf5ef;color:#5a9a6a;">✓ 社長報告済</span>':'';
+      const exportNote=item.note?'<div class="export-note">◎ '+esc(item.note)+'</div>':'';
+      const exportPhone=(item.phoneTransfer||item.phoneOrder)?'<div class="export-note">☎ 取次 '+esc(item.phoneTransfer||'0')+'件／受注 '+esc(item.phoneOrder||'0')+'件</div>':'';
+      const exportStore=(item.clients||item.purchases)?'<div class="export-note">👥 接客 '+esc(item.clients||'0')+'名／購入 '+esc(item.purchases||'0')+'名</div>':'';
+      const shareLine=item.shareSalon?'<div class="export-note">🏢 シェアサロン勤務あり</div>':'';
+      html+='<div class="export-block"><span class="export-name">■ '+item.name+'</span>'
+        +'<span class="export-status" style="background:'+bg+';color:'+fg+';">'+st+'</span>'+checkedBadge
         +'<div class="export-text '+(item.content?'':'empty')+'">'+(item.content?esc(item.content):'（記入なし）')+'</div>'
-        +exportNote+exportPhone
-        +'</div>';
+        +exportNote+exportPhone+exportStore+shareLine+'</div>';
     });
     preview.innerHTML=html; preview.dataset.date=date; preview.dataset.raw=JSON.stringify(list);
   });
 }
-function downloadText() {
-  const preview=document.getElementById('exportPreview'); if(!preview.dataset.raw) return;
-  const list=JSON.parse(preview.dataset.raw), date=preview.dataset.date;
-  let text=`業務報告書　${fmtJP(date)}\n\n`;
-  list.forEach(item=>{ text+=`■ ${item.name}（${item.workStatus||'未回答'}）${item.checked?' ✓確認済':''}\n${item.content||'（記入なし）'}\n${item.note?'◎ '+item.note+'\n':''}${(item.phoneTransfer||item.phoneOrder)?'☎ 取次 '+(item.phoneTransfer||'0')+'件／受注 '+(item.phoneOrder||'0')+'件\n':''}\n`; });
-  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'})); a.download=`業務報告書_${date}.txt`; a.click();
+function downloadText(){
+  const preview=document.getElementById('exportPreview'); if(!preview.dataset.raw)return;
+  const list=JSON.parse(preview.dataset.raw),date=preview.dataset.date;
+  let text='業務報告書　'+fmtJP(date)+'\n\n';
+  list.forEach(item=>{
+    text+='■ '+item.name+'（'+(item.workStatus||'未回答')+'）'+(item.checked?' ✓社長報告済':'')+'\n';
+    text+=(item.content||'（記入なし）')+'\n';
+    if(item.note) text+='◎ '+item.note+'\n';
+    if(item.phoneTransfer||item.phoneOrder) text+='☎ 取次 '+(item.phoneTransfer||'0')+'件／受注 '+(item.phoneOrder||'0')+'件\n';
+    if(item.clients||item.purchases) text+='👥 接客 '+(item.clients||'0')+'名／購入 '+(item.purchases||'0')+'名\n';
+    text+='\n';
+  });
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'})); a.download='業務報告書_'+date+'.txt'; a.click();
 }
-function downloadImage() {
-  const preview=document.getElementById('exportPreview'); if(!preview.dataset.raw) return;
+function downloadImage(){
+  const preview=document.getElementById('exportPreview'); if(!preview.dataset.raw)return;
   const btn=document.getElementById('e-download-image'); btn.disabled=true; btn.textContent='作成中…';
-  html2canvas(preview,{scale:2,backgroundColor:'#ffffff'}).then(canvas=>{ const a=document.createElement('a'); a.href=canvas.toDataURL('image/png'); a.download=`業務報告書_${preview.dataset.date}.png`; a.click(); btn.disabled=false; btn.textContent='画像で保存'; });
+  html2canvas(preview,{scale:2,backgroundColor:'#ffffff'}).then(canvas=>{const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='業務報告書_'+preview.dataset.date+'.png';a.click();btn.disabled=false;btn.textContent='画像で保存';});
+}
+
+// ============================================================
+// 申し送りタブ
+// ============================================================
+const DEST_OPTIONS=['全員','新宿','銀座','本社'];
+let selectedDest='全員';
+
+function buildDestButtons(){
+  const box=document.getElementById('o-dest-btns'); box.innerHTML='';
+  const allDests=[...DEST_OPTIONS,...STAFF];
+  allDests.forEach(d=>{
+    const b=document.createElement('div'); b.className='dest-btn'+(d==='全員'?' active':''); b.textContent=d;
+    b.addEventListener('click',()=>{box.querySelectorAll('.dest-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');selectedDest=d;});
+    box.appendChild(b);
+  });
+  selectedDest='全員';
+}
+
+function refreshOshirase(){
+  const myname=document.getElementById('w-myname').value||'';
+  // 自分宛
+  const myBox=document.getElementById('o-my-list');
+  myBox.innerHTML='<div class="loading">読み込み中…</div>';
+  jsonp({action:'getMyOshirase',name:myname}).then(list=>{
+    myBox.innerHTML='';
+    if(!list||list.length===0){myBox.innerHTML='<div class="loading">未確認の申し送りはありません</div>';return;}
+    list.forEach(item=>{
+      const div=buildOshiraseCardEl(item,myname,true);
+      myBox.appendChild(div);
+    });
+  });
+  // 全件
+  const allBox=document.getElementById('o-all-list');
+  allBox.innerHTML='<div class="loading">読み込み中…</div>';
+  jsonp({action:'getAllActiveOshirase'}).then(list=>{
+    allBox.innerHTML='';
+    if(!list||list.length===0){allBox.innerHTML='<div class="loading">アクティブな申し送りはありません</div>';return;}
+    list.forEach(item=>{
+      const div=buildOshiraseCardEl(item,myname,false);
+      allBox.appendChild(div);
+    });
+  });
+}
+
+function buildOshiraseCardEl(item,myname,showConfirm){
+  const isUnread=!item.confirmed.includes(myname);
+  const div=document.createElement('div'); div.className='oshirase-card'+(isUnread?' unread':'');
+  const confirmedNames=item.confirmed.join('、')||'なし';
+  const remainingNames=item.remaining.join('、')||'全員確認済み';
+  div.innerHTML='<div class="oshirase-header">'
+    +'<div><span class="oshirase-meta">'+esc(item.created)+' '+esc(item.author)+'</span><span class="oshirase-dest">宛先：'+esc(item.dest)+'</span></div>'
+    +'</div>'
+    +'<div class="oshirase-content">'+esc(item.content)+'</div>'
+    +'<div class="oshirase-remaining">✓ 確認済み：'+esc(confirmedNames)+'　未確認：'+esc(remainingNames)+'</div>'
+    +(showConfirm&&isUnread&&myname?'<button class="oshirase-confirm-btn" data-id="'+esc(item.id)+'">✓ 確認済みにする</button>':'');
+  if(showConfirm&&isUnread&&myname){
+    div.querySelector('.oshirase-confirm-btn').addEventListener('click',function(){
+      const btn=this; btn.disabled=true; btn.textContent='処理中…';
+      postData({action:'markOshiraseRead',id:item.id,name:myname}).then(res=>{
+        if(res.success){refreshOshirase();loadWriteData(document.getElementById('w-date').value);}
+        else{btn.disabled=false;btn.textContent='✓ 確認済みにする';}
+      });
+    });
+  }
+  return div;
+}
+
+function submitOshirase(){
+  const dest=selectedDest, content=document.getElementById('o-content').value.trim();
+  const author=document.getElementById('o-author').value.trim()||document.getElementById('w-myname').value||'名前未設定';
+  const msg=document.getElementById('o-msg');
+  if(!content){msg.textContent='内容を入力してください。';msg.className='msg show err';return;}
+  const btn=document.getElementById('o-submit'); btn.disabled=true; btn.textContent='送信中…';
+  postData({action:'createOshirase',author,dest,content}).then(res=>{
+    btn.disabled=false; btn.textContent='申し送りを送信';
+    if(res.success){
+      document.getElementById('o-content').value='';
+      msg.textContent='申し送りを送信しました。';msg.className='msg show ok';
+      refreshOshirase();
+    } else {msg.textContent=res.error||'送信に失敗しました。';msg.className='msg show err';}
+  }).catch(()=>{btn.disabled=false;btn.textContent='申し送りを送信';msg.textContent='通信エラー';msg.className='msg show err';});
 }
 </script>
 </body>
