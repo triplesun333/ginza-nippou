@@ -91,18 +91,38 @@ button:disabled{opacity:.45;}
 .oshirase-banner-sub{font-size:12px;color:#8a5a1a;margin-top:4px;}
 
 /* === チェックリスト === */
-.checklist-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
-.checklist-item:last-child{border-bottom:none;}
-.checklist-label{font-size:13px;font-weight:500;color:var(--navy);}
-.checklist-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.checklist-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px;border-radius:6px;margin-bottom:8px;gap:12px;
+  border:1.5px solid var(--border);border-left:4px solid var(--gold);
+  background:var(--gold-pale);transition:all .2s;
+}
+.checklist-item:last-child{margin-bottom:0;}
+.checklist-item.done{border-color:#b8dfc4;border-left-color:var(--green);background:#f0faf3;}
+.checklist-item.skipped{border-color:#d8d8d8;border-left-color:#b0b0b0;background:#f8f8f8;}
+.checklist-label{font-size:13px;font-weight:600;color:var(--navy);}
+.checklist-sub{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4;}
 .check-btns{display:flex;gap:6px;flex-shrink:0;}
-.check-btn{padding:6px 12px;border:1px solid var(--border);border-radius:3px;font-size:11px;font-weight:500;cursor:pointer;background:white;color:var(--muted);font-family:var(--sans);}
-.check-btn.sel-ok.active{background:var(--green);color:white;border-color:var(--green);}
-.check-btn.sel-ng.active{background:#e0e0e0;color:#666;border-color:#bbb;}
-.blog-btns{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
-.blog-btn{padding:6px 10px;border:1px solid var(--border);border-radius:3px;font-size:11px;font-weight:500;cursor:pointer;background:white;color:var(--muted);}
-.blog-btn.active{background:var(--navy);color:white;border-color:var(--navy);}
-.chappy-notice{background:var(--gold-pale);border:1px solid var(--gold-light);border-left:3px solid var(--gold);border-radius:3px;padding:10px 12px;margin-top:8px;font-size:12px;color:#8a6a2a;display:none;}
+.check-btn{
+  padding:8px 14px;border:1.5px solid var(--border);border-radius:20px;
+  font-size:12px;font-weight:600;cursor:pointer;background:white;
+  color:var(--muted);font-family:var(--sans);transition:all .15s;
+  white-space:nowrap;
+}
+.check-btn:hover{border-color:var(--navy);color:var(--navy);}
+.check-btn.sel-ok.active{background:var(--green);color:white;border-color:var(--green);box-shadow:0 2px 6px rgba(90,154,106,.3);}
+.check-btn.sel-ng.active{background:#9a9a9a;color:white;border-color:#9a9a9a;}
+.checklist-blog{padding:12px 14px;border-radius:6px;margin-bottom:8px;border:1.5px solid var(--gold);border-left:4px solid var(--gold);background:var(--gold-pale);}
+.checklist-blog.done{border-color:#b8dfc4;border-left-color:var(--green);background:#f0faf3;}
+.blog-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.blog-btn{
+  padding:8px 14px;border:1.5px solid var(--border);border-radius:20px;
+  font-size:12px;font-weight:600;cursor:pointer;background:white;color:var(--muted);
+  font-family:var(--sans);transition:all .15s;
+}
+.blog-btn:hover{border-color:var(--navy);color:var(--navy);}
+.blog-btn.active{background:var(--navy);color:white;border-color:var(--navy);box-shadow:0 2px 6px rgba(28,41,81,.25);}
+.chappy-notice{background:#fff8e1;border:1.5px solid #ffe082;border-left:4px solid var(--gold);border-radius:6px;padding:10px 14px;margin-top:10px;font-size:12px;color:#8a6a2a;display:none;}
 .chappy-link{display:inline-block;margin-top:6px;padding:5px 12px;background:var(--navy);color:white;border-radius:3px;font-size:11px;font-weight:500;text-decoration:none;}
 
 /* === 数値入力 === */
@@ -557,9 +577,11 @@ function buildChecklistUI(){
         div.querySelectorAll('.check-btn').forEach(x=>x.classList.remove('active'));
         b.classList.add('active');
         checklistState[item.key]=b.dataset.val==='true';
+        div.classList.remove('done','skipped');
+        div.classList.add(b.dataset.val==='true'?'done':'skipped');
       }));
     } else if(item.type==='blog'){
-      div.style.display='block'; div.style.padding='10px 0';
+      div.className='checklist-blog'; div.style.display='block';
       div.innerHTML='<div class="checklist-label">'+item.label+'</div><div class="checklist-sub">'+item.sub+'</div>'
         +'<div class="blog-btns">'+BLOG_OPTIONS.map(o=>'<div class="blog-btn" data-val="'+o.val+'">'+o.label+'</div>').join('')+'</div>'
         +'<div class="chappy-notice" id="chappy-notice"><b>📝 チャッピーへ依頼してください</b><br>片方のブログをもう一方の形式に変換・更新する依頼をチャッピー（ChatGPT）にお願いしてください。<br><a class="chappy-link" href="https://chatgpt.com/" target="_blank">チャッピーを開く →</a></div>';
@@ -567,6 +589,7 @@ function buildChecklistUI(){
       div.querySelectorAll('.blog-btn').forEach(b=>b.addEventListener('click',()=>{
         div.querySelectorAll('.blog-btn').forEach(x=>x.classList.remove('active'));
         b.classList.add('active'); checklistState.blog=b.dataset.val;
+        div.classList.toggle('done', b.dataset.val==='both');
         const notice=document.getElementById('chappy-notice');
         notice.style.display=(b.dataset.val==='ameblo'||b.dataset.val==='hotpepper')?'block':'none';
       }));
@@ -583,13 +606,23 @@ function setChecklistFromData(cl){
     if(cl[key]!==undefined&&cl[key]!==null){
       checklistState[key]=cl[key];
       const btn=box.querySelector('.check-btn[data-key="'+key+'"][data-val="'+String(cl[key])+'"]');
-      if(btn){box.querySelectorAll('.check-btn[data-key="'+key+'"]').forEach(x=>x.classList.remove('active'));btn.classList.add('active');}
+      if(btn){
+        box.querySelectorAll('.check-btn[data-key="'+key+'"]').forEach(x=>x.classList.remove('active'));
+        btn.classList.add('active');
+        const item=btn.closest('.checklist-item');
+        if(item){item.classList.remove('done','skipped');item.classList.add(cl[key]===true?'done':'skipped');}
+      }
     }
   });
   if(cl.blog){
     checklistState.blog=cl.blog;
     const btn=box.querySelector('.blog-btn[data-val="'+cl.blog+'"]');
-    if(btn){box.querySelectorAll('.blog-btn').forEach(x=>x.classList.remove('active'));btn.classList.add('active');}
+    if(btn){
+      box.querySelectorAll('.blog-btn').forEach(x=>x.classList.remove('active'));
+      btn.classList.add('active');
+      const blogDiv=btn.closest('.checklist-blog');
+      if(blogDiv) blogDiv.classList.toggle('done', cl.blog==='both');
+    }
     const notice=document.getElementById('chappy-notice');
     if(notice) notice.style.display=(cl.blog==='ameblo'||cl.blog==='hotpepper')?'block':'none';
   }
