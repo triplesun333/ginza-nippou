@@ -706,13 +706,18 @@ function submitWrite(){
   const shareActive=document.getElementById('w-share-toggle').classList.contains('active');
   const isStore=status==='新宿店勤務'||shareActive;
   const isHonsha=status==='本社勤務';
-  // チェックリスト確認
-  let clOk=true;
-  CHECKLIST_DEF.forEach(item=>{
-    if(item.type==='bool'&&checklistState[item.key]===null) clOk=false;
-    if(item.type==='blog'&&!checklistState.blog) clOk=false;
-  });
-  if(!clOk&&status!=='公休'){msg.textContent='チェックリストをすべて入力してください。';msg.className='msg show err';return;}
+  // チェックリスト確認（公休以外は必須）
+  if(status!=='公休'){
+    const blogLabel={'both':'両方更新済み','ameblo':'アメブロのみ','hotpepper':'ホットペッパーのみ'};
+    const checkNames={prevReport:'前日日報確認',blog:'ブログ更新',story:'ストーリー投稿',estateCheck:'エステ予約確認',mailCheck:'メール確認'};
+    const missing=[];
+    if(checklistState.prevReport===null||checklistState.prevReport===undefined) missing.push(checkNames.prevReport);
+    if(!checklistState.blog) missing.push(checkNames.blog);
+    if(checklistState.story===null||checklistState.story===undefined) missing.push(checkNames.story);
+    if(checklistState.estateCheck===null||checklistState.estateCheck===undefined) missing.push(checkNames.estateCheck);
+    if(checklistState.mailCheck===null||checklistState.mailCheck===undefined) missing.push(checkNames.mailCheck);
+    if(missing.length>0){msg.textContent='チェックリストの未入力項目があります：'+missing.join('、');msg.className='msg show err';return;}
+  }
   if(isHonsha&&status!=='公休'){
     const pt=document.getElementById('w-phone-transfer').value.trim(), po=document.getElementById('w-phone-order').value.trim();
     if(pt===''||po===''){msg.textContent='電話対応件数（取次・受注）を入力してください。';msg.className='msg show err';return;}
