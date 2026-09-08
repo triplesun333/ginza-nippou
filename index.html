@@ -876,10 +876,11 @@ function buildExport(){
       const exportPhone=(item.phoneTransfer||item.phoneOrder)?'<div class="export-note">☎ 取次 '+esc(item.phoneTransfer||'0')+'件／受注 '+esc(item.phoneOrder||'0')+'件</div>':'';
       const exportStore=(item.clients||item.purchases)?'<div class="export-note">👥 接客 '+esc(item.clients||'0')+'名／購入 '+esc(item.purchases||'0')+'名</div>':'';
       const shareLine=item.shareSalon?'<div class="export-note">🏢 シェアサロン勤務あり</div>':'';
+      const checklistLine=item.submitted?'<div class="export-note">'+fmtChecklist(item.checklist)+'</div>':'';
       html+='<div class="export-block"><span class="export-name">■ '+item.name+'</span>'
         +'<span class="export-status" style="background:'+bg+';color:'+fg+';">'+st+'</span>'+checkedBadge
         +'<div class="export-text '+(item.content?'':'empty')+'">'+(item.content?esc(item.content):'（記入なし）')+'</div>'
-        +exportNote+exportPhone+exportStore+shareLine+'</div>';
+        +exportNote+exportPhone+exportStore+shareLine+checklistLine+'</div>';
     });
     // 申し送りセクション
     if(oshirase&&oshirase.length>0){
@@ -900,6 +901,30 @@ function buildExport(){
     preview.dataset.oshirase=JSON.stringify(oshirase||[]);
   });
 }
+function fmtChecklist(cl){
+  if(!cl||typeof cl!=='object'||Object.keys(cl).length===0) return '📋 チェックリスト：未回答';
+  const blogLabel={'both':'両方更新済み✓','ameblo':'アメブロのみ','hotpepper':'ホットペッパーのみ',null:'未回答',undefined:'未回答'};
+  const items=[
+    '前日確認：'+(cl.prevReport===true?'✓':cl.prevReport===false?'✗':'－'),
+    'ブログ：'+(blogLabel[cl.blog]||'－'),
+    'ストーリー：'+(cl.story===true?'✓':cl.story===false?'✗':'－'),
+    'エステ予約：'+(cl.estateCheck===true?'✓':cl.estateCheck===false?'✗':'－'),
+    'メール：'+(cl.mailCheck===true?'✓':cl.mailCheck===false?'✗':'－'),
+  ];
+  return '📋 '+items.join('　');
+}
+function fmtChecklistText(cl){
+  if(!cl||typeof cl!=='object'||Object.keys(cl).length===0) return 'チェックリスト：未回答';
+  const blogLabel={'both':'両方更新済み✓','ameblo':'アメブロのみ','hotpepper':'ホットペッパーのみ'};
+  const items=[
+    '前日確認：'+(cl.prevReport===true?'✓':cl.prevReport===false?'✗':'－'),
+    'ブログ：'+(blogLabel[cl.blog]||'－'),
+    'ストーリー：'+(cl.story===true?'✓':cl.story===false?'✗':'－'),
+    'エステ予約：'+(cl.estateCheck===true?'✓':cl.estateCheck===false?'✗':'－'),
+    'メール確認：'+(cl.mailCheck===true?'✓':cl.mailCheck===false?'✗':'－'),
+  ];
+  return items.join(' / ');
+}
 function downloadText(){
   const preview=document.getElementById('exportPreview'); if(!preview.dataset.raw)return;
   const list=JSON.parse(preview.dataset.raw),date=preview.dataset.date;
@@ -910,6 +935,7 @@ function downloadText(){
     if(item.note) text+='◎ '+item.note+'\n';
     if(item.phoneTransfer||item.phoneOrder) text+='☎ 取次 '+(item.phoneTransfer||'0')+'件／受注 '+(item.phoneOrder||'0')+'件\n';
     if(item.clients||item.purchases) text+='👥 接客 '+(item.clients||'0')+'名／購入 '+(item.purchases||'0')+'名\n';
+    if(item.submitted) text+='📋 '+fmtChecklistText(item.checklist)+'\n';
     text+='\n';
   });
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'})); a.download='業務報告書_'+date+'.txt'; a.click();
