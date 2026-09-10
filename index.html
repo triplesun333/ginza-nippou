@@ -755,14 +755,12 @@ function submitWrite(){
     const pt=document.getElementById('w-phone-transfer').value.trim(), po=document.getElementById('w-phone-order').value.trim();
     if(pt===''||po===''){msg.textContent='電話対応件数（取次・受注）を入力してください。';msg.className='msg show err';return;}
   }
-  if(isStore&&!shareActive===false||isStore){
-    // store metrics required
-  }
   const content=document.getElementById('w-content').value.trim(), note=document.getElementById('w-note').value.trim();
   const phoneTransfer=isHonsha?document.getElementById('w-phone-transfer').value.trim():'';
   const phoneOrder=isHonsha?document.getElementById('w-phone-order').value.trim():'';
   const clients=isStore?document.getElementById('w-clients').value.trim():'';
   const purchases=isStore?document.getElementById('w-purchases').value.trim():'';
+  if(isStore&&(clients===''||purchases==='')){msg.textContent='接客人数と購入者数を入力してください（0名の場合は0と入力してください）。';msg.className='msg show err';return;}
   const shareSalon=shareActive;
   const checklistJson=JSON.stringify(checklistState);
   const others=Array.from(document.querySelectorAll('.other-row')).map(r=>{const s=r.querySelector('.other-btn.selected');return s?{name:r.dataset.name,workStatus:s.dataset.value}:null;}).filter(Boolean);
