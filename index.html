@@ -682,7 +682,9 @@ async function loadWriteData(date){
 
   // 申し送り通知
   const oshiraseRes=await jsonp({action:'getMyOshirase',name:myname}).catch(()=>[]);
-  myOshiraseCount=Array.isArray(oshiraseRes)?oshiraseRes.length:0;
+  // 宛先フィルタリング（自分が対象の申し送りのみカウント）
+  const eligibleOshirase=(Array.isArray(oshiraseRes)?oshiraseRes:[]).filter(item=>isEligibleForOshirase(item.dest,myname));
+  myOshiraseCount=eligibleOshirase.length;
   updateOshiraseTabBadge(myOshiraseCount);
   const oshiraseBanner=document.getElementById('w-oshirase-banner');
   const goBtn=document.getElementById('btn-go-oshirase');
