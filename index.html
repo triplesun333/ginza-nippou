@@ -271,7 +271,8 @@ table.grid td.date-cell{text-align:left;font-weight:400;white-space:nowrap;paddi
       <div id="w-store-section" style="display:none;">
         <label>接客・販売実績</label>
         <div class="metrics-row">
-          <div class="metric-field"><span class="metric-label">接客人数</span><input type="number" id="w-clients" inputmode="numeric" min="0" placeholder="0"><span class="metric-unit">名</span></div>
+          <div class="metric-field"><span class="metric-label">対面接客</span><input type="number" id="w-clients" inputmode="numeric" min="0" placeholder="0"><span class="metric-unit">名</span></div>
+          <div class="metric-field"><span class="metric-label">電話接客</span><input type="number" id="w-clients-tel" inputmode="numeric" min="0" placeholder="0"><span class="metric-unit">名</span></div>
           <div class="metric-field"><span class="metric-label">購入者数</span><input type="number" id="w-purchases" inputmode="numeric" min="0" placeholder="0"><span class="metric-unit">名</span></div>
         </div>
       </div>
@@ -712,7 +713,8 @@ async function loadWriteData(date){
   document.getElementById('w-note').value=res.note||'';
   document.getElementById('w-phone-transfer').value=res.phoneTransfer||'';
   document.getElementById('w-phone-order').value=res.phoneOrder||'';
-  document.getElementById('w-clients').value=res.clients||'';
+  document.getElementById('w-clients').value=res.clients&&res.clients.includes('/')?res.clients.split('/')[0].replace('対面','').trim():res.clients||'';
+  document.getElementById('w-clients-tel').value=res.clients&&res.clients.includes('/')?res.clients.split('/')[1].replace('電話','').trim():'';
   document.getElementById('w-purchases').value=res.purchases||'';
   const shareToggle=document.getElementById('w-share-toggle');
   if(res.shareSalon){shareToggle.classList.add('active');document.getElementById('w-share-chk').textContent='✓';}
@@ -758,9 +760,11 @@ function submitWrite(){
   const content=document.getElementById('w-content').value.trim(), note=document.getElementById('w-note').value.trim();
   const phoneTransfer=isHonsha?document.getElementById('w-phone-transfer').value.trim():'';
   const phoneOrder=isHonsha?document.getElementById('w-phone-order').value.trim():'';
-  const clients=isStore?document.getElementById('w-clients').value.trim():'';
+  const clientsFace=isStore?document.getElementById('w-clients').value.trim():'';
+  const clientsTel=isStore?document.getElementById('w-clients-tel').value.trim():'';
+  const clients=isStore?(clientsFace!==''||clientsTel!==''?'対面'+clientsFace+'/電話'+clientsTel:''):'';
   const purchases=isStore?document.getElementById('w-purchases').value.trim():'';
-  if(isStore&&(clients===''||purchases==='')){msg.textContent='接客人数と購入者数を入力してください（0名の場合は0と入力してください）。';msg.className='msg show err';return;}
+  if(isStore&&(clientsFace===''||clientsTel===''||purchases==='')){msg.textContent='対面接客・電話接客・購入者数を入力してください（0名の場合は0）。';msg.className='msg show err';return;}
   const shareSalon=shareActive;
   const checklistJson=JSON.stringify(checklistState);
   const others=Array.from(document.querySelectorAll('.other-row')).map(r=>{const s=r.querySelector('.other-btn.selected');return s?{name:r.dataset.name,workStatus:s.dataset.value}:null;}).filter(Boolean);
@@ -788,7 +792,7 @@ function refreshCheck(){
     list.forEach(item=>{
       const sl=item.workStatus||'未回答', row=document.createElement('div'); row.className='status-row';
       const phoneLine=(item.submitted&&item.workStatus!=='公休'&&(item.phoneTransfer||item.phoneOrder))?'<div class="status-note">☎ 取次 '+esc(item.phoneTransfer||'0')+'件／受注 '+esc(item.phoneOrder||'0')+'件</div>':'';
-      const storeLine=(item.submitted&&(item.clients||item.purchases))?'<div class="status-note">👥 接客 '+esc(item.clients||'0')+'名／購入 '+esc(item.purchases||'0')+'名</div>':'';
+      const storeLine=(item.submitted&&(item.clients||item.purchases))?'<div class="status-note">👥 '+esc(item.clients||'接客0名')+' ／購入 '+esc(item.purchases||'0')+'名</div>':'';
       const shareLine=item.shareSalon?'<div class="status-note">🏢 シェアサロン勤務あり</div>':'';
       const noteLine=item.note?'<div class="status-note">◎ '+esc(item.note)+'</div>':'';
       const btnLabel=item.checked?'✓ 社長確認済':'社長確認済みにする';
@@ -910,7 +914,7 @@ function buildExport(){
       const checkedBadge=item.checked?'<span class="export-status" style="background:#edf5ef;color:#5a9a6a;">✓ 社長確認済</span>':'';
       const exportNote=item.note?'<div class="export-note">◎ '+esc(item.note)+'</div>':'';
       const exportPhone=(item.phoneTransfer||item.phoneOrder)?'<div class="export-note">☎ 取次 '+esc(item.phoneTransfer||'0')+'件／受注 '+esc(item.phoneOrder||'0')+'件</div>':'';
-      const exportStore=(item.clients||item.purchases)?'<div class="export-note">👥 接客 '+esc(item.clients||'0')+'名／購入 '+esc(item.purchases||'0')+'名</div>':'';
+      const exportStore=(item.clients||item.purchases)?'<div class="export-note">👥 '+esc(item.clients||'接客0名')+' ／購入 '+esc(item.purchases||'0')+'名</div>':'';
       const shareLine=item.shareSalon?'<div class="export-note">🏢 シェアサロン勤務あり</div>':'';
       const checklistLine=item.submitted?'<div class="export-note">'+fmtChecklist(item.checklist)+'</div>':'';
       html+='<div class="export-block"><span class="export-name">■ '+item.name+'</span>'
@@ -970,7 +974,7 @@ function downloadText(){
     text+=(item.content||'（記入なし）')+'\n';
     if(item.note) text+='◎ '+item.note+'\n';
     if(item.phoneTransfer||item.phoneOrder) text+='☎ 取次 '+(item.phoneTransfer||'0')+'件／受注 '+(item.phoneOrder||'0')+'件\n';
-    if(item.clients||item.purchases) text+='👥 接客 '+(item.clients||'0')+'名／購入 '+(item.purchases||'0')+'名\n';
+    if(item.clients||item.purchases) text+='👥 '+(item.clients||'接客0名')+'／購入 '+(item.purchases||'0')+'名\n';
     if(item.submitted) text+='📋 '+fmtChecklistText(item.checklist)+'\n';
     text+='\n';
   });
@@ -1025,38 +1029,45 @@ function buildDestButtons(){
   selectedDest='全員';
 }
 
+// 宛先が自分に該当するか判定
+function isEligibleForOshirase(dest, myname){
+  if(!myname) return false;
+  // グループ宛は全員に表示
+  if(dest==='全員'||dest==='新宿'||dest==='銀座'||dest==='本社') return true;
+  // 個人名宛はその人だけ
+  return dest===myname;
+}
+
 function refreshOshirase(){
   const myname=document.getElementById('w-myname').value||'';
-  // 自分宛
+  // 未確認（自分宛のみ）
   const myBox=document.getElementById('o-my-list');
   myBox.innerHTML='<div class="loading">読み込み中…</div>';
   jsonp({action:'getMyOshirase',name:myname}).then(list=>{
     myBox.innerHTML='';
-    if(!list||list.length===0){myBox.innerHTML='<div class="loading">未確認の申し送りはありません</div>';return;}
-    list.forEach(item=>{
-      const div=buildOshiraseCardEl(item,myname,true);
-      myBox.appendChild(div);
-    });
+    const filtered=(list||[]).filter(item=>isEligibleForOshirase(item.dest,myname));
+    if(filtered.length===0){myBox.innerHTML='<div class="loading">未確認の申し送りはありません</div>';return;}
+    filtered.forEach(item=>{const div=buildOshiraseCardEl(item,myname,true);myBox.appendChild(div);});
   });
-  // 全件
+  // 全件（自分宛のみ）
   const allBox=document.getElementById('o-all-list');
   allBox.innerHTML='<div class="loading">読み込み中…</div>';
   jsonp({action:'getAllActiveOshirase'}).then(list=>{
     allBox.innerHTML='';
-    if(!list||list.length===0){allBox.innerHTML='<div class="loading">アクティブな申し送りはありません</div>';return;}
-    list.forEach(item=>{
-      const div=buildOshiraseCardEl(item,myname,true);
-      allBox.appendChild(div);
-    });
+    const filtered=(list||[]).filter(item=>isEligibleForOshirase(item.dest,myname));
+    if(filtered.length===0){allBox.innerHTML='<div class="loading">表示できる申し送りはありません</div>';return;}
+    filtered.forEach(item=>{const div=buildOshiraseCardEl(item,myname,true);allBox.appendChild(div);});
   });
 }
 
 function buildOshiraseCardEl(item,myname,showConfirm){
   const isUnread=!item.confirmed.includes(myname);
-  const div=document.createElement('div'); div.className='oshirase-card'+(isUnread?' unread':'');
+  const eligible=isEligibleForOshirase(item.dest,myname);
+  const div=document.createElement('div'); div.className='oshirase-card'+(isUnread&&eligible?' unread':'');
   const confirmedNames=item.confirmed.join('、')||'なし';
   const remainingNames=item.remaining.join('、')||'全員確認済み';
-  const confirmBtns=(showConfirm&&myname)
+  // 確認ボタン：宛先に含まれる人だけ
+  const confirmBtns=(showConfirm&&myname&&eligible)
     ? (isUnread
         ? '<button class="oshirase-confirm-btn" data-id="'+esc(item.id)+'" data-action="mark">✓ 確認済みにする</button>'
         : '<button class="oshirase-confirm-btn" data-id="'+esc(item.id)+'" data-action="unmark" style="background:#8a8a9a;">↩ 未確認に戻す</button>')
