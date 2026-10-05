@@ -125,6 +125,9 @@ button:disabled{opacity:.45;}
 .chappy-notice{background:#fff8e1;border:1.5px solid #ffe082;border-left:4px solid var(--gold);border-radius:6px;padding:10px 14px;margin-top:10px;font-size:12px;color:#8a6a2a;display:none;}
 .chappy-link{display:inline-block;margin-top:6px;padding:5px 12px;background:var(--navy);color:white;border-radius:3px;font-size:11px;font-weight:500;text-decoration:none;}
 
+/* === 読み込み中は入力欄をロック（読み込み完了前の入力が、後から届くデータで上書きされるのを防ぐ） === */
+#panel-write.w-locked .card:not(:first-of-type){opacity:.5;pointer-events:none;}
+
 /* === 数値入力 === */
 .metrics-row{display:flex;gap:8px;margin-top:7px;}
 .metric-field{flex:1;display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:3px;padding:8px 10px;background:#fdfcfb;}
@@ -244,6 +247,7 @@ table.grid td.date-cell{text-align:left;font-weight:400;white-space:nowrap;paddi
 
     <div id="w-oshirase-banner" style="display:none;"></div>
     <div id="w-missing-block" style="display:none;"></div>
+    <div class="msg" id="w-loading-note"></div>
 
     <div class="card">
       <label>勤務区分</label>
@@ -544,6 +548,39 @@ const BLOG_OPTIONS=[
 let checklistState={prevReport:null, blog:null, story:null, estateCheck:null, mailCheck:null};
 let shareSalonActive=false;
 
+// ---- 読み込み中ロック／画面と内部状態のズレ防止 ----
+let writeLoadSeq=0;
+function setWriteLoading(on){
+  const panel=document.getElementById('panel-write');
+  const note=document.getElementById('w-loading-note');
+  panel.classList.toggle('w-locked',on);
+  if(note){note.textContent=on?'⏳ データを読み込み中です…（数秒お待ちください）':'';note.className=on?'msg info show':'msg';}
+  if(on){
+    const ae=document.activeElement;
+    if(ae&&['w-content','w-note','w-phone-transfer','w-phone-order','w-clients','w-clients-tel','w-purchases'].includes(ae.id)) ae.blur();
+  }
+}
+// 通信が返ってこない場合でも画面が固まらないよう、一定時間で打ち切る
+function withTimeout(p,ms,fallback){
+  return new Promise(resolve=>{
+    let done=false;
+    const t=setTimeout(()=>{if(!done){done=true;resolve(fallback);}},ms);
+    p.then(v=>{if(!done){done=true;clearTimeout(t);resolve(v);}},()=>{if(!done){done=true;clearTimeout(t);resolve(fallback);}});
+  });
+}
+// 画面に見えているボタンの状態（緑／紺）を正として、内部の状態を作り直す
+function syncChecklistStateFromDom(){
+  const box=document.getElementById('w-checklist-items');
+  const st={prevReport:null,blog:null,story:null,estateCheck:null,mailCheck:null};
+  ['prevReport','story','estateCheck','mailCheck'].forEach(key=>{
+    const a=box.querySelector('.check-btn[data-key="'+key+'"].active');
+    if(a) st[key]=a.dataset.val==='true';
+  });
+  const b=box.querySelector('.blog-btn.active');
+  if(b) st.blog=b.dataset.val;
+  checklistState=st;
+}
+
 function buildMyStatusButtons(){
   const box=document.getElementById('w-mystatus-btns'); box.innerHTML='';
   WORK_STATUS_LIST.forEach(s=>{
@@ -601,7 +638,7 @@ function buildChecklistUI(){
 
 function setChecklistFromData(cl){
   checklistState={prevReport:null,blog:null,story:null,estateCheck:null,mailCheck:null};
-  if(!cl||typeof cl!=='object')return;
+  if(!cl||typeof cl!=='object'){syncChecklistStateFromDom();return;}
   const box=document.getElementById('w-checklist-items');
   ['prevReport','story','estateCheck','mailCheck'].forEach(key=>{
     if(cl[key]!==undefined&&cl[key]!==null){
@@ -627,6 +664,7 @@ function setChecklistFromData(cl){
     const notice=document.getElementById('chappy-notice');
     if(notice) notice.style.display=(cl.blog==='ameblo'||cl.blog==='hotpepper')?'block':'none';
   }
+  syncChecklistStateFromDom(); // 画面の見た目と内部状態を必ず一致させる
 }
 
 function updateMetricsDisplay(){
@@ -661,14 +699,27 @@ function updateOshiraseTabBadge(count){
   }
 }
 
+// 読み込み中は入力欄をロックし、完了（または失敗・タイムアウト）で必ず解除する
 async function loadWriteData(date){
+  const mySeq=++writeLoadSeq;
+  setWriteLoading(true);
+  try{ await loadWriteDataInner(date,mySeq); }
+  finally{ if(mySeq===writeLoadSeq) setWriteLoading(false); }
+}
+async function loadWriteDataInner(date,mySeq){
   const myname=document.getElementById('w-myname').value;
   document.getElementById('w-msg').className='msg';
   buildChecklistUI();
   checklistState={prevReport:null,blog:null,story:null,estateCheck:null,mailCheck:null};
 
+  // 3つの読み込みを同時に開始（待ち時間を短縮）。応答がない場合は15秒で打ち切る
+  const pMissing=withTimeout(jsonp({action:'checkMissingReports',name:myname,date}),15000,{missing:[]});
+  const pOshirase=withTimeout(jsonp({action:'getMyOshirase',name:myname}),15000,[]);
+  const pReport=withTimeout(jsonp({action:'getReportForDate',date,name:myname}),15000,{__timeout:true});
+
   // 未提出チェック（9/7以降）
-  const missingRes=await jsonp({action:'checkMissingReports',name:myname,date}).catch(()=>({missing:[]}));
+  const missingRes=(await pMissing)||{missing:[]};
+  if(mySeq!==writeLoadSeq) return; // 日付や名前が切り替わった後の古い応答は使わない
   myMissingDates=missingRes.missing||[];
   const missingBlock=document.getElementById('w-missing-block');
   if(myMissingDates.length>0){
@@ -681,7 +732,8 @@ async function loadWriteData(date){
   } else { missingBlock.style.display='none'; }
 
   // 申し送り通知
-  const oshiraseRes=await jsonp({action:'getMyOshirase',name:myname}).catch(()=>[]);
+  const oshiraseRes=await pOshirase;
+  if(mySeq!==writeLoadSeq) return;
   // 宛先フィルタリング（自分が対象の申し送りのみカウント）
   const eligibleOshirase=(Array.isArray(oshiraseRes)?oshiraseRes:[]).filter(item=>isEligibleForOshirase(item.dest,myname));
   myOshiraseCount=eligibleOshirase.length;
@@ -710,7 +762,14 @@ async function loadWriteData(date){
   }
 
   // 既存データ読み込み
-  const res=await jsonp({action:'getReportForDate',date,name:myname}).catch(()=>({}));
+  const res=(await pReport)||{};
+  if(mySeq!==writeLoadSeq) return;
+  if(res.__timeout){
+    const tm=document.getElementById('w-msg');
+    tm.textContent='この日の保存済みデータを読み込めませんでした。通信状況を確認して、日付を選び直すと再読み込みできます。';
+    tm.className='msg show err';
+    return;
+  }
   document.getElementById('w-content').value=res.content||'';
   document.getElementById('w-note').value=res.note||'';
   document.getElementById('w-phone-transfer').value=res.phoneTransfer||'';
@@ -743,6 +802,7 @@ function submitWrite(){
   const shareActive=document.getElementById('w-share-toggle').classList.contains('active');
   const isStore=status==='新宿店勤務'||shareActive;
   const isHonsha=status==='本社勤務';
+  syncChecklistStateFromDom(); // 画面で緑になっているものを正として判定・送信する（見た目と送信内容のズレ防止）
   // チェックリスト確認（公休以外は必須）
   if(status!=='公休'){
     const blogLabel={'both':'両方更新済み','ameblo':'アメブロのみ','hotpepper':'ホットペッパーのみ'};
